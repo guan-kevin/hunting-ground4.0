@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: Build and test
+    name: Build
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -17,3 +17,25 @@ jobs:
       - name: Run python script
         run: |
           python test.py
+
+  test:
+    name: Test
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        fruit: [apple, pear]
+        animal: [cat, dog]
+        include:
+          - color: green
+          - color: pink
+            animal: cat
+          - fruit: apple
+            shape: circle
+          - fruit: banana
+          - fruit: banana
+            animal: cat
+    steps:
+      - name: Run shell script
+        run: |
+          echo 'Hello world'
+          echo 'From ${{ matrix.fruit }}'
