@@ -1,0 +1,19 @@
+name: Main
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run shell script
+        run: |
+          echo 'Hello world'
+      - name: Set up Python 
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.6'
+      - name: Run python script
+        run: |
+          python test.py
