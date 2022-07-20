@@ -39,3 +39,4 @@ jobs:
         run: |
           echo 'Hello world'
           echo 'From ${{ matrix.fruit }}'
+          exit 1
