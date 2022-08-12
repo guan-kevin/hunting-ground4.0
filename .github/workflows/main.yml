@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup 1
-        run: echo "Setup 1 OK"
+        run: echo "Setup 1 OK" && exit 255
       - name: Setup 2
         id: final_setup
         run: echo "Setup 2 OK"
