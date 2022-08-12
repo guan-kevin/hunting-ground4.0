@@ -16,5 +16,5 @@ jobs:
         if: ${{ steps.final_setup.conclusion == 'success' }}
         run: echo "Test 1" && exit 255
       - name: Run test 2
-        if: ${{ always() }}
+        if: ${{ steps.final_setup.conclusion == 'success' }}
         run: echo "Test 2"
