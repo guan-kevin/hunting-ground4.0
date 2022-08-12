@@ -8,13 +8,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Fake Setup 1
-        run: exit 1
+        run: echo "Setup 1 OK"
       - name: Fake Setup 2
         id: final_setup
-        run: exit 2
+        run: echo "Setup 2 OK"
       - name: Run test 1
         if: steps.final_setup.conclusion == 'success'
-        run: echo "Test 1"
+        run: echo "Test 1" && exit 255
       - name: Run test 2
         if: steps.final_setup.conclusion == 'success'
         run: echo "Test 2"
