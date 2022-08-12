@@ -8,10 +8,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup 1
-        run: echo "Setup 1 OK" && exit 255
+        run: echo "Setup 1 OK"
       - name: Setup 2
         id: final_setup
-        run: echo "Setup 2 OK"
+        run: echo "Setup 2 OK" && exit 255
       - name: Run test 1
         if: always() && steps.final_setup.conclusion == 'success'
         run: echo "Test 1" && exit 255
