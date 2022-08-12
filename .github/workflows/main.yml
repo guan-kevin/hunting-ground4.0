@@ -10,10 +10,11 @@ jobs:
       - name: Setup 1
         run: echo "Setup 1 OK"
       - name: Setup 2
+        id: final_setup
         run: echo "Setup 2 OK"
       - name: Run test 1
-        continue-on-error: true
+        if: always() && step.final_setup.conclusion == 'success'
         run: echo "Test 1" && exit 255
       - name: Run test 2
-        continue-on-error: true
+        if: always() && step.final_setup.conclusion == 'success'
         run: echo "Test 2"
