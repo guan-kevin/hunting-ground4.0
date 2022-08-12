@@ -13,8 +13,8 @@ jobs:
         id: final_setup
         run: echo "Setup 2 OK"
       - name: Run test 1
-        if: steps.final_setup.conclusion == 'success'
+        if: ${{ steps.final_setup.conclusion == 'success' }}
         run: echo "Test 1" && exit 255
       - name: Run test 2
-        if: steps.final_setup.conclusion == 'success'
+        if: ${{ steps.final_setup.conclusion == 'success' }}
         run: echo "Test 2"
