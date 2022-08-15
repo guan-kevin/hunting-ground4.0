@@ -7,14 +7,36 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - name: Setup 1
-        run: echo "Setup 1 OK"
-      - name: Setup 2
-        id: final_setup
-        run: echo "Setup 2 OK" && exit 255
-      - name: Run test 1
-        if: always() && steps.final_setup.conclusion == 'success'
-        run: echo "Test 1" && exit 255
-      - name: Run test 2
-        if: always() && steps.final_setup.conclusion == 'success'
-        run: echo "Test 2"
+      - name: Run shell script
+        run: |
+          if [[ $CONDITION == "0" ]]; then
+            echo "Condition is 0"
+          else
+            echo "Condition is not 0"
+          fi
+
+          if [[ $TEXT == "" ]]; then
+            echo "Text is empty"
+          else
+            echo "Text is ${TEXT}"
+          fi
+        env:
+          CONDITION: 0
+          TEXT: hello world
+      - name: Run python script
+        run: |
+          import os
+          condition = os.getenv('CONDITION')
+          if condition == '0':
+            print('Condition is 0')
+          else:
+            print('Condition is not 0')
+          text = os.getenv('TEXT')
+          if text == None:
+            print('Text is empty')
+          else:
+            print('Text is: {}'.format(text))
+        shell: python
+        env:
+          CONDITION: 0
+          TEXT: hello world
