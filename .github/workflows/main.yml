@@ -26,6 +26,7 @@ jobs:
       - name: Run shell script
         run: |
           echo "Running hello script..."
+          chmod u+x hello.sh
           ./hello.sh
         env:
           CONDITION: 0
