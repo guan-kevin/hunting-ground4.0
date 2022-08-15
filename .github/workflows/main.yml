@@ -23,6 +23,23 @@ jobs:
         env:
           CONDITION: 0
           TEXT: hello world
+      - name: Run shell script
+        run: |
+          if [[ $CONDITION == "0" ]]; then
+            echo "Condition is 0"
+          else
+            echo "Condition is not 0"
+          fi
+
+          if [[ $TEXT == "" ]]; then
+            echo "Text is empty"
+          else
+            echo "Text is ${TEXT}"
+          fi
+        env:
+          CONDITION: 0
+          TEXT: hello world
+        shell: bash
       - name: Run python script
         run: |
           import os
