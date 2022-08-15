@@ -25,6 +25,14 @@ jobs:
           TEXT: hello world
       - name: Run shell script
         run: |
+          echo "Running hello script..."
+          ./hello.sh
+        env:
+          CONDITION: 0
+          TEXT: hello world
+        working-directory: ./script
+      - name: Run shell script
+        run: |
           if [[ $CONDITION == "0" ]]; then
             echo "Condition is 0"
           else
