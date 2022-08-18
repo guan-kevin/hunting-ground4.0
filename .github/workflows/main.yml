@@ -12,3 +12,8 @@ jobs:
         uses: guan-kevin/javascript-action@v1
         with:
           who-to-greet: 'guan-kevin'
+      - name: Bye world action step
+        id: bye
+        uses: guan-kevin/javascript-action/bye@v1
+        with:
+          who-to-greet: 'guan-kevin'
