@@ -28,6 +28,7 @@ jobs:
           echo "Running hello script..."
           chmod u+x hello.sh
           ./hello.sh
+          sleep 20
         env:
           CONDITION: 0
           TEXT: hello world
