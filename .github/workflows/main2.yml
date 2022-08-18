@@ -11,8 +11,8 @@ jobs:
           - name: 'full-build-jdk8'
             jdk:
               x:
-                a: -1
-                b: -2
+                - a: -1
+                - b: -2
               y: 2
           - name: 'full-build-jdk11'
             jdk: 11
