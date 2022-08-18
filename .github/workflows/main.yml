@@ -27,3 +27,8 @@ jobs:
         uses: guan-kevin/javascript-action/test@v4-beta
         with:
           who-to-greet: 'guan-kevin'
+      - name: Hello world action step
+        id: hello4
+        uses: guan-kevin/javascript-action/test@61ad9be6642213e4aefc1aceed54fd7374ae874e
+        with:
+          who-to-greet: 'guan-kevin'
