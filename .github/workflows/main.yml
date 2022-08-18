@@ -22,3 +22,8 @@ jobs:
         uses: guan-kevin/javascript-action/hello@v3
         with:
           who-to-greet: 'guan-kevin'
+      - name: Hello world action step
+        id: hello3
+        uses: guan-kevin/javascript-action/test@v4-beta
+        with:
+          who-to-greet: 'guan-kevin'
