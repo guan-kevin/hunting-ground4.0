@@ -7,63 +7,8 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - name: Run ${{ env.TEXT }}
-        run: |
-          if [[ $CONDITION == "0" ]]; then
-            echo "Condition is 0"
-          else
-            echo "Condition is not 0"
-          fi
-
-          if [[ $TEXT == "" ]]; then
-            echo "Text is empty"
-          else
-            echo "Text is ${TEXT}"
-          fi
-        env:
-          CONDITION: 0
-          TEXT: hello world
-      - name: Run shell script
-        run: |
-          echo "Running hello script..."
-          chmod u+x hello.sh
-          ./hello.sh
-          sleep 20
-        env:
-          CONDITION: 0
-          TEXT: hello world
-        working-directory: ./script
-      - name: Run shell script
-        run: |
-          if [[ $CONDITION == "0" ]]; then
-            echo "Condition is 0"
-          else
-            echo "Condition is not 0"
-          fi
-
-          if [[ $TEXT == "" ]]; then
-            echo "Text is empty"
-          else
-            echo "Text is ${TEXT}"
-          fi
-        env:
-          CONDITION: 0
-          TEXT: hello world
-        shell: bash
-      - name: Run python script
-        run: |
-          import os
-          condition = os.getenv('CONDITION')
-          if condition == '0':
-            print('Condition is 0')
-          else:
-            print('Condition is not 0')
-          text = os.getenv('TEXT')
-          if text == None:
-            print('Text is empty')
-          else:
-            print('Text is: {}'.format(text))
-        shell: python
-        env:
-          CONDITION: 0
-          TEXT: hello world
+      - name: Hello world action step
+        id: hello
+        uses: guan-kevin/javascript-action@v1
+        with:
+          who-to-greet: 'guan-kevin'
