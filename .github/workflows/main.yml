@@ -9,11 +9,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Hello world action step
         id: hello
-        uses: guan-kevin/javascript-action@v1
+        uses: guan-kevin/javascript-action@v2
         with:
           who-to-greet: 'guan-kevin'
       - name: Bye world action step
         id: bye
-        uses: guan-kevin/javascript-action/bye@v1
+        uses: guan-kevin/javascript-action/bye@v2
         with:
           who-to-greet: 'guan-kevin'
