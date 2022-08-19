@@ -5,8 +5,11 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-20.04
+    timeout-minutes: 1
     steps:
       - uses: actions/checkout@v2
+      - name: Timeout
+        run: sleep 100
       - name: Hello world action step
         id: hello
         uses: guan-kevin/javascript-action@v1
