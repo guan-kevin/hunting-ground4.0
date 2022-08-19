@@ -12,7 +12,7 @@ jobs:
         run: sleep 100
       - name: Hello world action step
         id: hello
-        uses: guan-kevin/javascript-action@v1
+        uses: guan-kevin/javascript-action
         with:
           who-to-greet: 'guan-kevin'
       - name: Bye world action step
