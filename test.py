@@ -1,1 +1,1 @@
-print('This is a test', z)
+print('This is a test')
