@@ -19,30 +19,31 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.8' 
-      - name: Verify Environment Variables
+      - name: Test Environment Variables
         env:
           step_ENV_1: Step Env 1
           job_ENV_2: Step Env 2
           workflow_ENV_3: Step Env 3
         run: |
           if [[ $workflow_ENV_1 != "Workflow Env 1" ]]; then
-            exit 1
+            echo "Incorrect workflow_ENV_1" && exit 1
           fi
           if [[ $workflow_ENV_2 != "Job Env 3" ]]; then
-            exit 1
+            echo "Incorrect workflow_ENV_2" && exit 1
           fi
-          if [[ $workflow_ENV_3 != "Workflow Env 3" ]]; then
-            exit 1
+          if [[ $workflow_ENV_3 != "Step Env 3" ]]; then
+            echo "Incorrect workflow_ENV_3" && exit 1
           fi
           if [[ $job_ENV_1 != "Job Env 1" ]]; then
-            exit 1
+            echo "Incorrect job_ENV_1" && exit 1
           fi
           if [[ $job_ENV_2 != "Step Env 2" ]]; then
-            exit 1
+            echo "Incorrect job_ENV_2" && exit 1
           fi
           if [[ $step_ENV_1 != "Step Env 1" ]]; then
-            exit 1
+            echo "Incorrect step_ENV_1" && exit 1
           fi
+          echo "Test Environment Variables OK!"
 
   test-defaults:
     name: Test Reproducer (defaults)
@@ -55,12 +56,20 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.8' 
-      - run: |
+      - name: Test defaults.run.shell and defaults.run.working-directory
+        run: |
+          import os
           if not os.getcwd().endswith('/python'):
             exit(1);
-      - run: mkdir shell
+          print("Test defaults.run.shell and defaults.run.working-directory OK")
+      - name: Test Override shell
+        run: |
+          mkdir shell
+          echo "Test Override shell OK"
         shell: bash
+      - name: Test override working-directory
       - run: |
           if not os.getcwd().endswith('/python/shell'):
             exit(1);
+          print("Test working-directory OK")
         working-directory: shell
