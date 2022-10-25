@@ -51,11 +51,12 @@ jobs:
     defaults:
       run:
         shell: python
-        working-directory: ./script
+        working-directory: python
     steps:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.8' 
+      - uses: actions/checkout@v3
       - name: Test defaults.run.shell and defaults.run.working-directory
         run: |
           import os
