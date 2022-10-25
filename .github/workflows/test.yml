@@ -61,6 +61,7 @@ jobs:
         run: |
           import os
           if not os.getcwd().endswith('/python'):
+            print("Incorrect working directory")
             exit(1);
           print("Test defaults.run.shell and defaults.run.working-directory OK")
       - name: Test Override shell
@@ -72,7 +73,8 @@ jobs:
       - name: Test override working-directory
         run: |
           import os
-          if not os.getcwd().endswith('/python/shell'):
+          if not os.getcwd().endswith('/shell'):
+            print("Incorrect working directory")
             exit(1);
           print("Test working-directory OK")
         working-directory: shell
