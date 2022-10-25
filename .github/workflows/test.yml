@@ -1,0 +1,66 @@
+name: Reproducer Test
+on: [push, pull_request]
+
+env:
+  workflow_ENV_1: Workflow Env 1
+  workflow_ENV_2: Workflow Env 2
+  workflow_ENV_3: Workflow Env 3
+
+jobs:
+  test-all:
+    name: Test Reproducer
+    runs-on: ubuntu-20.04
+    env:
+      job_ENV_1: Job Env 1
+      job_ENV_2: Job Env 2
+      workflow_ENV_2: Job Env 3
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8' 
+      - name: Verify Environment Variables
+        env:
+          step_ENV_1: Step Env 1
+          job_ENV_2: Step Env 2
+          workflow_ENV_3: Step Env 3
+        run: |
+          if [[ $workflow_ENV_1 != "Workflow Env 1" ]]; then
+            exit 1
+          fi
+          if [[ $workflow_ENV_2 != "Job Env 3" ]]; then
+            exit 1
+          fi
+          if [[ $workflow_ENV_3 != "Workflow Env 3" ]]; then
+            exit 1
+          fi
+          if [[ $job_ENV_1 != "Job Env 1" ]]; then
+            exit 1
+          fi
+          if [[ $job_ENV_2 != "Step Env 2" ]]; then
+            exit 1
+          fi
+          if [[ $step_ENV_1 != "Step Env 1" ]]; then
+            exit 1
+          fi
+
+  test-defaults:
+    name: Test Reproducer (defaults)
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: python
+        working-directory: python
+    steps:
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8' 
+      - run: |
+          if not os.getcwd().endswith('/python'):
+            exit(1);
+      - run: mkdir shell
+        shell: bash
+      - run: |
+          if not os.getcwd().endswith('/python/shell'):
+            exit(1);
+        working-directory: shell
