@@ -24,9 +24,9 @@ jobs:
           mkdir test
           echo "LARGER_THAN_0=1" >> $GITHUB_ENV
           echo "larger_than_0=2" >> $GITHUB_ENV
-          echo "SMALLER_THAN_0<<1!@#$aA[];|\~`.,?/+-)(*&^%" >> $GITHUB_ENV
+          echo 'SMALLER_THAN_0<<1!@#$aA[];|\~`.,?/+-)(*&^%' >> $GITHUB_ENV
           echo "-1" >> $GITHUB_ENV
-          echo "1!@#$aA[];|\~`.,?/+-)(*&^%" >> $GITHUB_ENV
+          echo '1!@#$aA[];|\~`.,?/+-)(*&^%' >> $GITHUB_ENV
       - name: Test Environment Variables
         env:
           step_ENV_1: Step Env 1
