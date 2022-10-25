@@ -71,6 +71,7 @@ jobs:
         shell: bash
       - name: Test override working-directory
         run: |
+          import os
           if not os.getcwd().endswith('/python/shell'):
             exit(1);
           print("Test working-directory OK")
