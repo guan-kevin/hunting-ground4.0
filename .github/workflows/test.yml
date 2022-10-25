@@ -65,6 +65,7 @@ jobs:
           print("Test defaults.run.shell and defaults.run.working-directory OK")
       - name: Test Override shell
         run: |
+          cd ..
           mkdir shell
           echo "Test Override shell OK"
         shell: bash
