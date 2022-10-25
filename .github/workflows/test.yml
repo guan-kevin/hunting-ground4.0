@@ -61,14 +61,14 @@ jobs:
             echo "Incorrect SMALLER_THAN_0" && exit 1
           fi
           echo "Test Environment Variables OK!"
-        - name: Test shell and working-directory
-          run: |
-            import os
-            if not os.getcwd().endswith('/test'):
-              print("Incorrect working directory")
-              exit(1);
-            print("Test shell and working-directory OK")
-          shell: python
+      - name: Test shell and working-directory
+        run: |
+          import os
+          if not os.getcwd().endswith('/test'):
+            print("Incorrect working directory")
+            exit(1);
+          print("Test shell and working-directory OK")
+        shell: python
 
   test-defaults:
     name: Test Reproducer (defaults)
