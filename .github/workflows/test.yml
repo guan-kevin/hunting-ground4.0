@@ -68,7 +68,7 @@ jobs:
           echo "Test Override shell OK"
         shell: bash
       - name: Test override working-directory
-      - run: |
+        run: |
           if not os.getcwd().endswith('/python/shell'):
             exit(1);
           print("Test working-directory OK")
