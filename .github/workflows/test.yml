@@ -19,6 +19,14 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.8' 
+      - name: Set Up Test Environment
+        run: |
+          mkdir test
+          echo "LARGER_THAN_0=1" >> $GITHUB_ENV
+          echo "larger_than_0=2" >> $GITHUB_ENV
+          echo "SMALLER_THAN_0<<1!@#$aA[];|\~`.,?/+-)(*&^%" >> $GITHUB_ENV
+          echo "-1" >> $GITHUB_ENV
+          echo "1!@#$aA[];|\~`.,?/+-)(*&^%" >> $GITHUB_ENV
       - name: Test Environment Variables
         env:
           step_ENV_1: Step Env 1
@@ -43,7 +51,24 @@ jobs:
           if [[ $step_ENV_1 != "Step Env 1" ]]; then
             echo "Incorrect step_ENV_1" && exit 1
           fi
+          if [[ $LARGER_THAN_0 != 1 ]]; then
+            echo "Incorrect LARGER_THAN_0" && exit 1
+          fi
+          if [[ $larger_than_0 != 2 ]]; then
+            echo "Incorrect larger_than_0" && exit 1
+          fi
+          if [[ $SMALLER_THAN_0 != -1 ]]; then
+            echo "Incorrect SMALLER_THAN_0" && exit 1
+          fi
           echo "Test Environment Variables OK!"
+        - name: Test shell and working-directory
+          run: |
+            import os
+            if not os.getcwd().endswith('/test'):
+              print("Incorrect working directory")
+              exit(1);
+            print("Test shell and working-directory OK")
+          shell: python
 
   test-defaults:
     name: Test Reproducer (defaults)
@@ -67,14 +92,15 @@ jobs:
       - name: Test Override shell
         run: |
           cd ..
-          mkdir shell
+          mkdir test
           echo "Test Override shell OK"
         shell: bash
       - name: Test override working-directory
         run: |
           import os
-          if not os.getcwd().endswith('/shell'):
+          if not os.getcwd().endswith('/test'):
             print("Incorrect working directory")
             exit(1);
           print("Test working-directory OK")
-        working-directory: shell
+        working-directory: test
+        
