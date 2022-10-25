@@ -69,6 +69,7 @@ jobs:
             exit(1);
           print("Test shell and working-directory OK")
         shell: python
+        working-directory: test
 
   test-defaults:
     name: Test Reproducer (defaults)
