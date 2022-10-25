@@ -51,7 +51,7 @@ jobs:
     defaults:
       run:
         shell: python
-        working-directory: python
+        working-directory: ./python
     steps:
       - uses: actions/setup-python@v4
         with:
