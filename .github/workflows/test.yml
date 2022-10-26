@@ -104,11 +104,11 @@ jobs:
         run: echo "test_not=1" >> $GITHUB_ENV
       - name: Test if statement using and
         id: test_and
-        if: ${{ $LARGER_THAN_0 == 1 && $SMALLER_THAN_0 == -1 }}
+        if: ${{ env.LARGER_THAN_0 == 1 && env.SMALLER_THAN_0 == -1 }}
         run: echo "test_and=1" >> $GITHUB_ENV
       - name: Test if statement using or
         id: test_and
-        if: ${{ $LARGER_THAN_0 == 0 || $SMALLER_THAN_0 == -1 }}
+        if: ${{ env.LARGER_THAN_0 == 0 || env.SMALLER_THAN_0 == -1 }}
         run: echo "test_or=1" >> $GITHUB_ENV
       - name: Checking test result
         run: |
