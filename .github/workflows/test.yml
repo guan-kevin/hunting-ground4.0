@@ -71,48 +71,92 @@ jobs:
         shell: python
         working-directory: test
       - name: Test if statement using not equal
+        id: test_not_equal
+        if: ${{ env.SMALLER_THAN_0 != 0 }}
+        run: echo "test_not_equal=1" >> $GITHUB_ENV
+      - name: Test if statement using not equal (again)
         if: ${{ env.LARGER_THAN_0 != 1 }}
         run: |
-          echo "LARGER_THAN_0 != 1" && exit 1
-      - name: Test if statement using not equal without {{ }}
+          echo "Test failed" && exit 1
+      - name: Test if statement using not equal
+        id: test_not_equal_again
+        if: env.SMALLER_THAN_0 != 0
+        run: echo "test_not_equal_again=1" >> $GITHUB_ENV
+      - name: Test if statement using not equal without {{ }} (again)
         if: env.LARGER_THAN_0 != 1
         run: |
-          echo "LARGER_THAN_0 != 1" && exit 1
+          echo "Test failed" && exit 1
       - name: Test if statement using less than
         id: test_less_than
         if: ${{ env.SMALLER_THAN_0 < 0 }}
         run: echo "test_less_than=1" >> $GITHUB_ENV
+      - name: Test if statement using less than (again)
+        if: ${{ env.SMALLER_THAN_0 < -2 }}
+        run: |
+          echo "Test failed" && exit 1
       - name: Test if statement using less than or equal
         id: test_less_than_or_equal
         if: ${{ env.SMALLER_THAN_0 <= -1 }}
         run: echo "test_less_than_or_equal=1" >> $GITHUB_ENV
+      - name: Test if statement using less than or equal (again)
+        if: ${{ env.SMALLER_THAN_0 <= -2 }}
+        run: |
+          echo "Test failed" && exit 1
       - name: Test if statement using greater than
         id: test_greater_than
         if: ${{ env.SMALLER_THAN_0 > -2 }}
         run: echo "test_greater_than=1" >> $GITHUB_ENV
+      - name: Test if statement using greater than (again)
+        if: ${{ env.SMALLER_THAN_0 > 0 }}
+        run: |
+          echo "Test failed" && exit 1
       - name: Test if statement using greater than or equal
         id: test_greater_than_or_equal
         if: ${{ env.SMALLER_THAN_0 >= -1 }}
         run: echo "test_greater_than_or_equal=1" >> $GITHUB_ENV
+      - name: Test if statement using greater than or equal (again)
+        if: ${{ env.SMALLER_THAN_0 >= 0 }}
+        run: |
+          echo "Test failed" && exit 1
       - name: Test if statement using equal
         id: test_equal
         if: ${{ env.SMALLER_THAN_0 == -1 }}
         run: echo "test_equal=1" >> $GITHUB_ENV
+      - name: Test if statement using equal (again)
+        if: ${{ env.SMALLER_THAN_0 == 0 }}
+        run: |
+          echo "Test failed" && exit 1
       - name: Test if statement using not
         id: test_not
         if: ${{ !(env.SMALLER_THAN_0 == 0) }}
         run: echo "test_not=1" >> $GITHUB_ENV
+      - name: Test if statement using not (again)
+        if: ${{ !(env.SMALLER_THAN_0 == -1) }}
+        run: |
+          echo "Test failed" && exit 1
       - name: Test if statement using and
         id: test_and
         if: ${{ env.LARGER_THAN_0 == 1 && env.SMALLER_THAN_0 == -1 }}
         run: echo "test_and=1" >> $GITHUB_ENV
+      - name: Test if statement using and (again)
+        if: ${{ env.LARGER_THAN_0 == 0 && env.SMALLER_THAN_0 == 0 }}
+        run: |
+          echo "Test failed" && exit 1
       - name: Test if statement using or
-        id: test_and
+        id: test_or
         if: ${{ env.LARGER_THAN_0 == 0 || env.SMALLER_THAN_0 == -1 }}
         run: echo "test_or=1" >> $GITHUB_ENV
+      - name: Test if statement using or (again)
+        if: ${{ env.LARGER_THAN_0 == 0 || env.SMALLER_THAN_0 == 0 }}
+        run: |
+          echo "Test failed" && exit 1
       - name: Checking test result
         run: |
-          if [[ $test_less_than != 1 ]]; then
+          if [[ $test_not_equal != 1 ]]; then
+            echo "Incorrect test_not_equal" && exit 1
+          elif [[ $test_not_equal_again != 1 ]]; then
+            echo "Incorrect test_not_equal_again" && exit 1
+          elif [[ $test_less_than != 1 ]]; then
             echo "Incorrect test_less_than" && exit 1
           elif [[ $test_less_than_or_equal != 1 ]]; then
             echo "Incorrect test_less_than_or_equal" && exit 1
@@ -162,4 +206,3 @@ jobs:
             exit(1);
           print("Test working-directory OK")
         working-directory: test
-        
