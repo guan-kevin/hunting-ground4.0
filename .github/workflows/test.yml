@@ -252,10 +252,10 @@ jobs:
           test_input-2: -2
           test_input-3: -3
           test_input-4: -4
-      - name: Test predefined action (tag)
-        uses: guan-kevin/javascript-action-tester@v2
-        with:
-          test_input-4: 4
+#     - name: Test predefined action (tag)
+#       uses: guan-kevin/javascript-action-tester@v2
+#       with:
+#         test_input-4: 4
       - name: Test predefined action (sha)
         uses: guan-kevin/javascript-action-tester@3734616519d8aade6e132a172eb671d1b57bd9e5
 
