@@ -24,9 +24,9 @@ jobs:
           mkdir test
           echo "LARGER_THAN_0=1" >> $GITHUB_ENV
           echo "larger_than_0=2" >> $GITHUB_ENV
-          echo 'SMALLER_THAN_0<<1!@#$aA[];|\~`.,?/+-)(*&^%' >> $GITHUB_ENV
+          echo 'SMALLER_THAN_0<<1!@#$aA[];|\~`.,?/+-)(*&^%<>' >> $GITHUB_ENV
           echo "-1" >> $GITHUB_ENV
-          echo '1!@#$aA[];|\~`.,?/+-)(*&^%' >> $GITHUB_ENV
+          echo '1!@#$aA[];|\~`.,?/+-)(*&^%<>' >> $GITHUB_ENV
       - name: Test Environment Variables
         env:
           step_ENV_1: Step Env 1
@@ -70,7 +70,53 @@ jobs:
           print("Test shell and working-directory OK")
         shell: python
         working-directory: test
-
+      - name: Test if statement using not equal
+        if: ${{ env.LARGER_THAN_0 != 1 }}
+        run: |
+          echo "LARGER_THAN_0 is 1" && exit 1
+      - name: Test if statement using not equal without {{ }}
+        if: env.LARGER_THAN_0 != 1
+        run: |
+          echo "LARGER_THAN_0 is 1" && exit 1
+      - name: Test if statement using less than
+        id: test_less_than
+        if: ${{ env.SMALLER_THAN_0 < 0 }}
+        run: echo "test_less_than=1" >> $GITHUB_ENV
+      - name: Test if statement using less than or equal
+        id: test_less_than_or_equal
+        if: ${{ env.SMALLER_THAN_0 <= -1 }}
+        run: echo "test_less_than_or_equal=1" >> $GITHUB_ENV
+      - name: Test if statement using greater than
+        id: test_greater_than
+        if: ${{ env.SMALLER_THAN_0 > -2 }}
+        run: echo "test_greater_than=1" >> $GITHUB_ENV
+      - name: Test if statement using greater than or equal
+        id: test_greater_than_or_equal
+        if: ${{ env.SMALLER_THAN_0 >= -1 }}
+        run: echo "test_greater_than_or_equal=1" >> $GITHUB_ENV
+      - name: Test if statement using equal
+        id: test_equal
+        if: ${{ env.SMALLER_THAN_0 == -1 }}
+        run: echo "test_equal=1" >> $GITHUB_ENV
+      - name: Test if statement using not
+        id: test_not
+        if: ${{ !(env.SMALLER_THAN_0 == 0) }}
+        run: echo "test_not=1" >> $GITHUB_ENV
+      - name: Checking test result
+        run: |
+          if [[ test_less_than != 1 ]]; then
+            echo "Incorrect test_less_than" && exit 1
+          elif [[ test_less_than_or_equal != 1 ]]; then
+            echo "Incorrect test_less_than_or_equal" && exit 1
+          elif [[ test_greater_than != 1 ]]; then
+            echo "Incorrect test_greater_than" && exit 1
+          elif [[ test_greater_than_or_equal != 1 ]]; then
+            echo "Incorrect test_greater_than_or_equal" && exit 1
+          elif [[ test_equal != 1 ]]; then
+            echo "Incorrect test_equal" && exit 1
+          elif [[ test_not != 1 ]]; then
+            echo "Incorrect test_not" && exit 1
+          fi
   test-defaults:
     name: Test Reproducer (defaults)
     runs-on: ubuntu-20.04
