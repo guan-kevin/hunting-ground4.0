@@ -73,11 +73,11 @@ jobs:
       - name: Test if statement using not equal
         if: ${{ env.LARGER_THAN_0 != 1 }}
         run: |
-          echo "LARGER_THAN_0 is 1" && exit 1
+          echo "LARGER_THAN_0 != 1" && exit 1
       - name: Test if statement using not equal without {{ }}
         if: env.LARGER_THAN_0 != 1
         run: |
-          echo "LARGER_THAN_0 is 1" && exit 1
+          echo "LARGER_THAN_0 != 1" && exit 1
       - name: Test if statement using less than
         id: test_less_than
         if: ${{ env.SMALLER_THAN_0 < 0 }}
@@ -102,20 +102,32 @@ jobs:
         id: test_not
         if: ${{ !(env.SMALLER_THAN_0 == 0) }}
         run: echo "test_not=1" >> $GITHUB_ENV
+      - name: Test if statement using and
+        id: test_and
+        if: ${{ $LARGER_THAN_0 == 1 && $SMALLER_THAN_0 == -1 }}
+        run: echo "test_and=1" >> $GITHUB_ENV
+      - name: Test if statement using or
+        id: test_and
+        if: ${{ $LARGER_THAN_0 == 0 || $SMALLER_THAN_0 == -1 }}
+        run: echo "test_or=1" >> $GITHUB_ENV
       - name: Checking test result
         run: |
-          if [[ test_less_than != 1 ]]; then
+          if [[ $test_less_than != 1 ]]; then
             echo "Incorrect test_less_than" && exit 1
-          elif [[ test_less_than_or_equal != 1 ]]; then
+          elif [[ $test_less_than_or_equal != 1 ]]; then
             echo "Incorrect test_less_than_or_equal" && exit 1
-          elif [[ test_greater_than != 1 ]]; then
+          elif [[ $test_greater_than != 1 ]]; then
             echo "Incorrect test_greater_than" && exit 1
-          elif [[ test_greater_than_or_equal != 1 ]]; then
+          elif [[ $test_greater_than_or_equal != 1 ]]; then
             echo "Incorrect test_greater_than_or_equal" && exit 1
-          elif [[ test_equal != 1 ]]; then
+          elif [[ $test_equal != 1 ]]; then
             echo "Incorrect test_equal" && exit 1
-          elif [[ test_not != 1 ]]; then
+          elif [[ $test_not != 1 ]]; then
             echo "Incorrect test_not" && exit 1
+          elif [[ $test_and != 1 ]]; then
+            echo "Incorrect test_and" && exit 1
+          elif [[ $test_or != 1 ]]; then
+            echo "Incorrect test_or" && exit 1
           fi
   test-defaults:
     name: Test Reproducer (defaults)
