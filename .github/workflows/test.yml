@@ -272,6 +272,10 @@ jobs:
           test_input-2: -2
           test_input-3: -3
           test_input-4: -4
+      - name: Test predefined action (composite)
+        uses: guan-kevin/composite-action-tester@main
+        with:
+          test_input: 1
 
   test-defaults:
     name: Test Reproducer (defaults)
@@ -306,4 +310,3 @@ jobs:
             exit(1);
           print("Test working-directory OK")
         working-directory: test
-        
