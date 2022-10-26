@@ -6,5 +6,6 @@ console.log(`Input 1: ${input1}, Input 2: ${input2}, Input 3: ${input3}, Input 4
   
 console.log("Running within same directory")
 if (input1 != -1 || input2 != -2 || input3 != -3 || input4 != -4) {
-  e x i t
+  x = y + 1;
+  // Exit
 }
