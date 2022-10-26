@@ -173,6 +173,48 @@ jobs:
           elif [[ $test_or != 1 ]]; then
             echo "Incorrect test_or" && exit 1
           fi
+      - name: Test Literals
+        run: |
+          temp="${{ null }}"
+          if [[ -z "$temp" ]]; then
+          else
+            echo "Incorrect null" && exit 1
+          fi
+
+          if [[ ${{ false }} == false ]]; then
+          else
+            echo "Incorrect false" && exit 1
+          fi
+
+          if [[ ${{ true }} == true ]]; then
+          else
+            echo "Incorrect true" && exit 1
+          fi
+
+          if [[ ${{ 123 }} == 123 ]]; then
+          else
+            echo "Incorrect integer" && exit 1
+          fi
+
+          if [[ ${{ -1.23 }} == -1.23 ]]; then
+          else
+            echo "Incorrect float" && exit 1
+          fi
+
+          if [[ ${{ 0xff }} == 255 ]]; then
+          else
+            echo "Incorrect hex" && exit 1
+          fi
+
+          if [[ ${{ -2.99e-2 }} == -0.0299 ]]; then
+          else
+            echo "Incorrect exponential" && exit 1
+          fi
+          
+          if [[ ${{ 'A''B!' }} == "A'B" ]]; then
+          else
+            echo "Incorrect string" && exit 1
+          fi
   test-defaults:
     name: Test Reproducer (defaults)
     runs-on: ubuntu-20.04
@@ -206,3 +248,4 @@ jobs:
             exit(1);
           print("Test working-directory OK")
         working-directory: test
+        
