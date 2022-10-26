@@ -223,6 +223,29 @@ jobs:
           else
             echo "Incorrect string" && exit 1
           fi
+      - name: Test continue-on-error
+        run: exit 1
+        continue-on-error: true
+      - name: Verify continue-on-error
+        run: echo "Test continue-on-error OK"
+      - name: Test path
+        run: |
+          if [[ "${{ github.workspace }}/test" != $(pwd) ]];then
+            echo "Test set up failed."
+          fi
+
+          echo "echo \"Test path OK\"" >> test.sh
+          chmod u+x test.sh
+          echo "$(pwd)" >> $GITHUB_PATH
+        working-directory: test
+      - name: Verify path
+        run: |
+          if [[ "Test path OK" == $(test.sh) ]];then
+            echo "Test path OK"
+          else
+            echo "Test path failed"
+          fi
+          
   test-defaults:
     name: Test Reproducer (defaults)
     runs-on: ubuntu-20.04
@@ -256,4 +279,3 @@ jobs:
             exit(1);
           print("Test working-directory OK")
         working-directory: test
-        
