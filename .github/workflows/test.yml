@@ -177,41 +177,49 @@ jobs:
         run: |
           temp="${{ null }}"
           if [[ -z "$temp" ]]; then
+            echo "OK"
           else
             echo "Incorrect null" && exit 1
           fi
 
           if [[ ${{ false }} == false ]]; then
+            echo "OK"
           else
             echo "Incorrect false" && exit 1
           fi
-
+            echo "OK"
           if [[ ${{ true }} == true ]]; then
+            echo "OK"
           else
             echo "Incorrect true" && exit 1
           fi
 
           if [[ ${{ 123 }} == 123 ]]; then
+            echo "OK"
           else
             echo "Incorrect integer" && exit 1
           fi
 
           if [[ ${{ -1.23 }} == -1.23 ]]; then
+            echo "OK"
           else
             echo "Incorrect float" && exit 1
           fi
 
           if [[ ${{ 0xff }} == 255 ]]; then
+            echo "OK"
           else
             echo "Incorrect hex" && exit 1
           fi
 
           if [[ ${{ -2.99e-2 }} == -0.0299 ]]; then
+            echo "OK"
           else
             echo "Incorrect exponential" && exit 1
           fi
           
           if [[ ${{ 'A''B!' }} == "A'B" ]]; then
+            echo "OK"
           else
             echo "Incorrect string" && exit 1
           fi
