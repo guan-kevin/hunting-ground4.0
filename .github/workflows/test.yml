@@ -259,7 +259,7 @@ jobs:
       - name: Test predefined action (sha)
         uses: guan-kevin/javascript-action-tester@23b56f8e49c1a891d07594eb8e254f2ef8788089
       - name: Test predefined action (subdirectory)
-        uses: guan-kevin/javascript-action-tester@main
+        uses: guan-kevin/javascript-action-tester/subdirectory@main
         with:
           test_input-1: -1
           test_input-2: -2
