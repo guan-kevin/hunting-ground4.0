@@ -245,6 +245,8 @@ jobs:
           else
             echo "Test path failed"
           fi
+      - name: Test predefined action (sha)
+        uses: guan-kevin/javascript-action-tester@2c675f60882d5d83eb14bda9203a942e55bc15a2
       - name: Test predefined action (branch)
         uses: guan-kevin/javascript-action-tester@v1
         with:
@@ -252,12 +254,10 @@ jobs:
           test_input-2: -2
           test_input-3: -3
           test_input-4: -4
-#     - name: Test predefined action (tag)
-#       uses: guan-kevin/javascript-action-tester@v2
-#       with:
-#         test_input-4: 4
-      - name: Test predefined action (sha)
-        uses: guan-kevin/javascript-action-tester@3734616519d8aade6e132a172eb671d1b57bd9e5
+      - name: Test predefined action (tag)
+        uses: guan-kevin/javascript-action-tester@v2
+        with:
+          test_input-4: 4
 
   test-defaults:
     name: Test Reproducer (defaults)
