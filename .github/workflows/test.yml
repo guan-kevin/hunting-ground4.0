@@ -218,7 +218,7 @@ jobs:
             echo "Incorrect exponential" && exit 1
           fi
           
-          if [[ ${{ 'A''B!' }} == "A'B" ]]; then
+          if [[ ${{ 'Hello' }} == "Hello" ]]; then
             echo "OK string"
           else
             echo "Incorrect string" && exit 1
