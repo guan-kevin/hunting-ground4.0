@@ -1,0 +1,20 @@
+name: 'Javascript Action Tester'
+description: 'Test Javascript Action'
+inputs:
+  test_input-1:
+    description: 'First test input'
+    required: true
+    default: 1
+  test_input-2:
+    description: 'Second test input'
+    required: false
+    default: 2
+  test_input-3:
+    description: 'Third test input'
+    default: 3
+  test_input-4:
+    description: 'Fourth test input'
+    required: true
+runs:
+  using: 'node16'
+  main: 'index.js'
