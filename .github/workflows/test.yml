@@ -334,7 +334,7 @@ jobs:
           fi
       - name: Test format
         run: |
-          if [[ "${{ format('Variable is {0}', env.workflow_ENV_1)" }} == "Variable is Workflow Env 1" ]]; then
+          if [[ "${{ format('Variable is {0}', env.workflow_ENV_1) }}" == "Variable is Workflow Env 1" ]]; then
             echo "format_1=1" >> $GITHUB_ENV
           fi
   
