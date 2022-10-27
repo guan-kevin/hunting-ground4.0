@@ -314,6 +314,7 @@ jobs:
           repository: guan-kevin/javascript-action-tester
           path: test5
           submodules: true
+          ref: submodule
       - name: Verify actions/checkout (ref, submodule, ref)
         run: |
           cd test5/submodule-tester
