@@ -287,7 +287,65 @@ jobs:
           ./test3.sh
         env:
           HELLO: world
-  
+
+
+  test-contexts:
+    name: Test reproducer (contexts)
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Test Contexts (github)
+        run: |
+          if [[ "${{ github.api_url }}" != "https://api.github.com" ]]; then
+            echo "api_url failed" && exit 1
+          fi
+
+          if [[ "${{ github.event_name }}" != "push" ]]; then
+            echo "event_name failed" && exit 1
+          fi
+   
+          if [[ "${{ github.graphql_url }}" != "https://api.github.com/graphql" ]]; then
+              echo "graphql_url failed" && exit 1
+          fi
+
+          if [[ "${{ github.job }}" != "test-contexts" ]]; then
+              echo "job failed" && exit 1
+          fi
+
+          if [[ "${{ github.ref }}" != "refs/heads/main" ]]; then
+              echo "ref failed" && exit 1
+          fi
+
+          if [[ "${{ github.ref_name }}" != "main" ]]; then
+              echo "ref_name failed" && exit 1
+          fi
+
+          if [[ "${{ github.ref_protected }}" != false ]]; then
+              echo "ref_protected failed" && exit 1
+          fi
+
+          if [[ "${{ github.ref_type }}" != "branch" ]]; then
+              echo "ref_type failed" && exit 1
+          fi
+
+          if [[ "${{ github.repository }}" != "guan-kevin/hunting-ground4.0" ]]; then
+              echo "repository failed" && exit 1
+          fi
+
+          if [[ "${{ github.repository_owner }}" != "guan-kevin" ]]; then
+              echo "repository_owner failed" && exit 1
+          fi
+
+          if [[ "${{ github.repositoryUrl }}" != "git://github.com/guan-kevin/hunting-ground4.0.git" ]]; then
+              echo "repositoryUrl failed" && exit 1
+          fi
+
+          if [[ "${{ github.server_url }}" != "https://github.com" ]]; then
+              echo "server_url failed" && exit 1
+          fi
+
+          if [[ "${{ github.workflow }}" != "test" ]]; then
+              echo "workflow failed" && exit 1
+          fi
   
   test-functions:
     name: Test Reproducer (expression fucntions)
