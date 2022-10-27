@@ -343,10 +343,53 @@ jobs:
               echo "server_url failed" && exit 1
           fi
 
-          if [[ "${{ github.workflow }}" != "test" ]]; then
+          if [[ "${{ github.workflow }}" != "Reproducer test" ]]; then
               echo "workflow failed" && exit 1
           fi
-  
+      - name: Test Contexts (env)
+        run: |
+          if [[ "${{ env.component }}" != "reproducer" ]]; then
+              echo "env failed" && exit 1
+          fi
+        env:
+          component: reproducer
+      - name: Test Contexts (job)
+        id: job-test
+        run: |
+          if [[ "${{ job.status }}" != "success" ]]; then
+              echo "status failed" && exit 1
+          fi
+      - name: Pre Test Contexts (steps)
+        id: steps-text
+        run: exit 1
+        continue-on-error: true
+      - name: Test Contexts (steps)
+        run: |
+          if [[ "${{ steps.job-test.conclusion }}" != "success" ]]; then
+              echo "concolusion 1 failed" && exit 1
+          fi
+
+          if [[ "${{ steps.job-test.outcome }}" != "success" ]]; then
+              echo "outcome 1 failed" && exit 1
+          fi
+
+          if [[ "${{ steps.steps-test.conclusion }}" != "success" ]]; then
+              echo "concolusion 2 failed" && exit 1
+          fi
+
+          if [[ "${{ steps.steps-test.outcome }}" != "failure" ]]; then
+              echo "outcome 2 failed" && exit 1
+          fi 
+      - name: Test Contexts (runner)
+        run: |
+          if [[ "${{ runner.os }}" != "Linux" ]]; then
+              echo "os failed" && exit 1
+          fi
+
+          if [[ "${{ runner.arch }}" != "X64" ]]; then
+              echo "arch failed" && exit 1
+          fi
+
   test-functions:
     name: Test Reproducer (expression fucntions)
     runs-on: ubuntu-20.04
