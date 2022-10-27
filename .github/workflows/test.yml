@@ -334,24 +334,24 @@ jobs:
           fi
       - name: Test format
         run: |
-          if [[ ${{ format('Variable is {0}', env.workflow_ENV_1) }} == 'Variable is Workflow Env 1' ]]; then
+          if [[ "${{ format('Variable is {0}', env.workflow_ENV_1)" }} == "Variable is Workflow Env 1" ]]; then
             echo "format_1=1" >> $GITHUB_ENV
           fi
   
-          if [[ ${{ format('{0} < {1}', env.workflow_ENV_1, env.workflow_ENV_2) }} == '1 < 2' ]]; then
+          if [[ "${{ format('{0} < {1}', env.workflow_ENV_1, env.workflow_ENV_2) }}" == "1 < 2" ]]; then
             echo "format_2=1" >> $GITHUB_ENV
           fi
   
-          if [[ ${{ format('{{Hello {0} {1} {2}!}}', 'Mona', 'the', 'Octocat') }} == "'{Hello Mona the Octocat!}'" ]]; then
+          if [[ "${{ format('{{Hello {0} {1} {2}!}}', 'Mona', 'the', 'Octocat') }}" == "'{Hello Mona the Octocat!}'" ]]; then
             echo "format_3=1" >> $GITHUB_ENV
           fi
       - name: Test join/fromJSON
         run: |
-          if [[ ${{ join(fromJson('["1", "2", "3"]'), '-') }} == '1-2-3' ]]; then
+          if [[ "${{ join(fromJson('["1", "2", "3"]'), '-') }}" == '1-2-3' ]]; then
             echo "join_1=1" >> $GITHUB_ENV
           fi
   
-          if [[ ${{ join(fromJson('["1", "2", "3"]')) }} == '1,2,3' ]]; then
+          if [[ "${{ join(fromJson('["1", "2", "3"]')) }}" == '1,2,3' ]]; then
             echo "join_2=1" >> $GITHUB_ENV
           fi
       - name: Test success
