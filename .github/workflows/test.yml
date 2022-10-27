@@ -338,7 +338,7 @@ jobs:
             echo "format_1=1" >> $GITHUB_ENV
           fi
   
-          if [[ "${{ format('{0} < {1}', env.workflow_ENV_1, env.workflow_ENV_2) }}" == "Workflow Env 1 < Workflow Env 1 2" ]]; then
+          if [[ "${{ format('{0} < {1}', env.workflow_ENV_1, env.workflow_ENV_2) }}" == "Workflow Env 1 < Workflow Env 2" ]]; then
             echo "format_2=1" >> $GITHUB_ENV
           fi
   
@@ -347,11 +347,11 @@ jobs:
           fi
       - name: Test join/fromJSON
         run: |
-          if [[ "${{ join(fromJson('["1", "2", "3"]'), '-') }}" == '1-2-3' ]]; then
+          if [[ "${{ join(fromJson('["1", "2", "3"]'), '-') }}" == "1-2-3" ]]; then
             echo "join_1=1" >> $GITHUB_ENV
           fi
   
-          if [[ "${{ join(fromJson('["1", "2", "3"]')) }}" == '1,2,3' ]]; then
+          if [[ "${{ join(fromJson('["1", "2", "3"]')) }}" == "1,2,3" ]]; then
             echo "join_2=1" >> $GITHUB_ENV
           fi
       - name: Test success
