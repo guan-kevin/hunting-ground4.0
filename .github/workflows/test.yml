@@ -287,7 +287,120 @@ jobs:
           ./test3.sh
         env:
           HELLO: world
-
+  
+  
+  test-functions:
+    name: Test Reproducer (expression fucntions)
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Test contains
+        run: |
+          if [[ ${{ contains(env.workflow_ENV_1, '1') }} == true ]]; then
+            echo "contains_1=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ ${{ contains(env.workflow_ENV_2, '1') }} != true ]]; then
+            echo "contains_2=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ ${{ contains('hello world', 'hello') }} == true ]]; then
+            echo "contains_3=1" >> $GITHUB_ENV
+          fi
+      - name: Test startsWith
+        run: |
+          if [[ ${{ startsWith(env.workflow_ENV_1, 'Work') }} == true ]]; then
+            echo "startsWith_1=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ ${{ startsWith(env.workflow_ENV_2, 'Job') }} != true ]]; then
+            echo "startsWith_2=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ ${{ startsWith('Hello world', 'hello') }} == true ]]; then
+            echo "startsWith_3=1" >> $GITHUB_ENV
+          fi
+      - name: Test endsWith
+        run: |
+          if [[ ${{ endsWith(env.workflow_ENV_1, '1') }} == true ]]; then
+            echo "endsWith_1=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ ${{ endsWith(env.workflow_ENV_2, '1') }} != true ]]; then
+            echo "endsWith_2=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ ${{ endsWith('Hello world', 'World') }} == true ]]; then
+            echo "endsWith_3=1" >> $GITHUB_ENV
+          fi
+      - name: Test format
+        run: |
+          if [[ ${{ format('Variable is {}', env.workflow_ENV_1) }} == 'Variable is Workflow Env 1' ]]; then
+            echo "format_1=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ ${{ format('{} < {}', env.workflow_ENV_1, env.workflow_ENV_2) }} == '1 < 2' ]]; then
+            echo "format_2=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ ${{ format('{{Hello {0} {1} {2}!}}', 'Mona', 'the', 'Octocat') }} == "'{Hello Mona the Octocat!}'" ]]; then
+            echo "format_3=1" >> $GITHUB_ENV
+          fi
+      - name: Test join
+        run: |
+          if [[ ${{ join([1, 2, 3], '-') }} == '1-2-3' ]]; then
+            echo "join_1=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ ${{ join([1, 2, 3]) }} == '1,2,3' ]]; then
+            echo "join_2=1" >> $GITHUB_ENV
+          fi
+      - name: Test success
+        if: success()
+        run: echo "success=1" >> $GITHUB_ENV
+      - name: Test always
+        if: always()
+        run: echo "always=1" >> $GITHUB_ENV
+      - name: Test failure
+        if: failure()
+        run: echo "failure=1" >> $GITHUB_ENV
+      - name: Check Test Result
+        run: |
+          if [[ $contains_1 != 1 ]]; then
+            echo "Incorrect contains_1" && exit 1
+          elif [[ $contains_2 != 1 ]]; then
+            echo "Incorrect contains_2" && exit 1
+          elif [[ $contains_3 != 1 ]]; then
+            echo "Incorrect contains_3" && exit 1
+          elif [[ $startsWith_1 != 1 ]]; then
+            echo "Incorrect startsWith_1" && exit 1
+          elif [[ $startsWith_2 != 1 ]]; then
+            echo "Incorrect startsWith_2" && exit 1
+          elif [[ $startsWith_3 != 1 ]]; then
+            echo "Incorrect startsWith_3" && exit 1
+          elif [[ $endsWith_1 != 1 ]]; then
+            echo "Incorrect endsWith_1" && exit 1
+          elif [[ $endsWith_2 != 1 ]]; then
+            echo "Incorrect endsWith_2" && exit 1
+          elif [[ $endsWith_3 != 1 ]]; then
+            echo "Incorrect endsWith_3" && exit 1
+          elif [[ $format_1 != 1 ]]; then
+            echo "Incorrect format_1" && exit 1
+          elif [[ $format_2 != 1 ]]; then
+            echo "Incorrect format_2" && exit 1
+          elif [[ $format_3 != 1 ]]; then
+            echo "Incorrect format_3" && exit 1
+          elif [[ $join_1 != 1 ]]; then
+            echo "Incorrect join_1" && exit 1
+          elif [[ $join_2 != 1 ]]; then
+            echo "Incorrect join_2" && exit 1
+          elif [[ $success != 1 ]]; then
+            echo "Incorrect success" && exit 1
+          elif [[ $always != 1 ]]; then
+            echo "Incorrect always" && exit 1
+          elif [[ $failure == 1 ]]; then
+            echo "Incorrect failure" && exit 1
+          fi
+  
   test-checkout:
     name: Test Reproducer (checkout)
     runs-on: ubuntu-20.04
