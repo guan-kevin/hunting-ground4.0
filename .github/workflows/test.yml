@@ -304,6 +304,7 @@ jobs:
       - name: Verify actions/checkout (ref, submodule)
         run: |
           cd test4/submodule-tester
+          chmod u+x test4.sh
           ./test4.sh
         env:
           HELLO: world
@@ -316,6 +317,7 @@ jobs:
       - name: Verify actions/checkout (ref, submodule, ref)
         run: |
           cd test5/submodule-tester
+          chmod u+x test5.sh
           ./test5.sh
         env:
           HELLO: reproducer
