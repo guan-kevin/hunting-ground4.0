@@ -287,12 +287,20 @@ jobs:
           ./test3.sh
         env:
           HELLO: world
+
+  test-checkout:
+    name: Test Reproducer (checkout)
+    runs-on: ubuntu-20.04
+    env:
+      LARGER_THAN_0: 1
+    steps:
+      - uses: actions/checkout@v3
       - name: Test actions/checkout (ref, submodule)
         uses: actions/checkout@v3
         with:
           repository: guan-kevin/javascript-action-tester
           path: test4
-          submodule: true
+          submodules: true
       - name: Verify actions/checkout (ref, submodule)
         run: |
           cd test4/submodule-tester
@@ -304,13 +312,25 @@ jobs:
         with:
           repository: guan-kevin/javascript-action-tester
           path: test5
-          submodule: true
+          submodules: true
       - name: Verify actions/checkout (ref, submodule, ref)
         run: |
           cd test5/submodule-tester
           ./test5.sh
         env:
           HELLO: reproducer
+      - name: Set up actions/checkout (path)
+        run: mkdir new-directory
+      - name: Test actions/checkout (path)
+        uses: actions/checkout@v3
+        with:
+          repository: guan-kevin/javascript-action-tester
+          path: new-directory/test6
+      - name: Verify actions/checkout (path)
+        run: |
+          print("Test OK")
+        shell: python
+        working-directory: new-directory/test6
 
   test-defaults:
     name: Test Reproducer (defaults)
