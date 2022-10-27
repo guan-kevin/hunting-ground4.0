@@ -287,6 +287,30 @@ jobs:
           ./test3.sh
         env:
           HELLO: world
+      - name: Test actions/checkout (ref, submodule)
+        uses: actions/checkout@v3
+        with:
+          repository: guan-kevin/javascript-action-tester
+          path: test4
+          submodule: true
+      - name: Verify actions/checkout (ref, submodule)
+        run: |
+          cd test4/submodule-tester
+          ./test4.sh
+        env:
+          HELLO: world
+      - name: Test actions/checkout (ref, submodule, ref)
+        uses: actions/checkout@v3
+        with:
+          repository: guan-kevin/javascript-action-tester
+          path: test5
+          submodule: true
+      - name: Verify actions/checkout (ref, submodule, ref)
+        run: |
+          cd test5/submodule-tester
+          ./test5.sh
+        env:
+          HELLO: reproducer
 
   test-defaults:
     name: Test Reproducer (defaults)
