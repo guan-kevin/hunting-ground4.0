@@ -343,7 +343,7 @@ jobs:
               echo "server_url failed" && exit 1
           fi
 
-          if [[ "${{ github.workflow }}" != "Reproducer test" ]]; then
+          if [[ "${{ github.workflow }}" != "Reproducer Test" ]]; then
               echo "workflow failed" && exit 1
           fi
       - name: Test Contexts (env)
