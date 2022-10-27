@@ -284,6 +284,7 @@ jobs:
       - name: Verify actions/checkout (ref)
         run: |
           cd test3
+          ls
           env HELLO=WORLD test3.sh
 
   test-defaults:
