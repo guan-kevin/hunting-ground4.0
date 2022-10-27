@@ -347,11 +347,11 @@ jobs:
           fi
       - name: Test join
         run: |
-          if [[ ${{ join([1, 2, 3], '-') }} == '1-2-3' ]]; then
+          if [[ ${{ join(['1', '2', '3'], '-') }} == '1-2-3' ]]; then
             echo "join_1=1" >> $GITHUB_ENV
           fi
   
-          if [[ ${{ join([1, 2, 3]) }} == '1,2,3' ]]; then
+          if [[ ${{ join(['1', '2', '3']) }} == '1,2,3' ]]; then
             echo "join_2=1" >> $GITHUB_ENV
           fi
       - name: Test success
