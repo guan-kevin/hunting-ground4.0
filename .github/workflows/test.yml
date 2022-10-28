@@ -16,6 +16,10 @@ jobs:
       workflow_ENV_2: Job Env 3
     steps:
       - uses: actions/checkout@v3
+      - name: Failed build
+        run: |
+          exit $(cat status.txt)
+        shell: bash
       - uses: actions/setup-python@v4
         with:
           python-version: '3.8' 
@@ -293,6 +297,11 @@ jobs:
     name: Test reproducer (contexts)
     runs-on: ubuntu-20.04
     steps:
+      - uses: actions/checkout@v3
+      - name: Failed build
+        run: |
+          exit $(cat status.txt)
+        shell: bash
       - name: Test Contexts (github)
         run: |
           if [[ "${{ github.api_url }}" != "https://api.github.com" ]]; then
@@ -394,6 +403,11 @@ jobs:
     name: Test Reproducer (expression fucntions)
     runs-on: ubuntu-20.04
     steps:
+      - uses: actions/checkout@v3
+      - name: Failed build
+        run: |
+          exit $(cat status.txt)
+        shell: bash
       - name: Test contains
         run: |
           if [[ ${{ contains(env.workflow_ENV_1, '1') }} == true ]]; then
@@ -509,6 +523,10 @@ jobs:
       LARGER_THAN_0: 1
     steps:
       - uses: actions/checkout@v3
+      - name: Failed build
+        run: |
+          exit $(cat status.txt)
+        shell: bash
       - name: Test actions/checkout (ref, submodule)
         uses: actions/checkout@v3
         with:
@@ -557,10 +575,15 @@ jobs:
         shell: python
         working-directory: python
     steps:
+      - uses: actions/checkout@v3
+      - name: Failed build
+        run: |
+          exit $(cat status.txt)
+        shell: bash
+        working-directory: .
       - uses: actions/setup-python@v4
         with:
           python-version: '3.8'
-      - uses: actions/checkout@v3
       - name: Test defaults.run.shell and defaults.run.working-directory
         run: |
           import os
@@ -582,4 +605,3 @@ jobs:
             exit(1);
           print("Test working-directory OK")
         working-directory: test
-        
