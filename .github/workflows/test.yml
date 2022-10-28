@@ -316,9 +316,9 @@ jobs:
               echo "graphql_url failed" && exit 1
           fi
 
-#         if [[ "${{ github.job }}" != "test-contexts" ]]; then
-#             echo "job failed" && exit 1
-#         fi
+          if [[ "${{ github.job }}" != "test-contexts" ]]; then
+            echo "job failed" && exit 0
+          fi
 
           if [[ "${{ github.ref }}" != "refs/heads/main" ]]; then
               echo "ref failed" && exit 1
@@ -605,4 +605,3 @@ jobs:
             exit(1);
           print("Test working-directory OK")
         working-directory: test
-        
