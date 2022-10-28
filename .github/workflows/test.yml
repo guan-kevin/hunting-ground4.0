@@ -155,6 +155,7 @@ jobs:
         run: |
           echo "Test failed: LARGER_THAN_0 == 0 or SMALLER_THAN_0 == 0 should be false." && exit 1
       - name: Checking test result
+        if: always()
         run: |
           if [[ $test_not_equal != 1 ]]; then
             echo "Incorrect test_not_equal" && exit 1
@@ -178,6 +179,7 @@ jobs:
             echo "Incorrect test_or" && exit 1
           fi
       - name: Test Literals
+        if: always()
         run: |
           temp="${{ null }}"
           if [[ -z "$temp" ]]; then
