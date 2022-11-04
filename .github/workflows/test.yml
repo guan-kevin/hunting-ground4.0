@@ -12,7 +12,7 @@ env:
 
 jobs:
   test-all:
-    name: Test Reproducer
+    name: Test Reproducer (all)
     runs-on: ubuntu-20.04
     container: ${{ matrix.container }}
     strategy:
@@ -319,6 +319,10 @@ jobs:
   test-contexts:
     name: Test reproducer (contexts)
     runs-on: ubuntu-20.04
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['', 'python:3']
     steps:
       - uses: actions/checkout@v3
       - name: Failed build
@@ -461,6 +465,10 @@ jobs:
   test-functions:
     name: Test Reproducer (expression fucntions)
     runs-on: ubuntu-20.04
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['', 'python:3']
     steps:
       - uses: actions/checkout@v3
       - name: Failed build
@@ -578,6 +586,10 @@ jobs:
   test-checkout:
     name: Test Reproducer (checkout)
     runs-on: ubuntu-20.04
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['', 'python:3']
     env:
       LARGER_THAN_0: 1
     steps:
@@ -629,6 +641,10 @@ jobs:
   test-defaults:
     name: Test Reproducer (defaults)
     runs-on: ubuntu-20.04
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['', 'python:3']
     defaults:
       run:
         shell: python
@@ -664,4 +680,5 @@ jobs:
             exit(1);
           print("Test working-directory OK")
         working-directory: test
+        
         
