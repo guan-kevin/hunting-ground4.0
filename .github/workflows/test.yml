@@ -1,5 +1,5 @@
 name: Reproducer Test
-on: [push, pull_request]
+on: push
 
 env:
   workflow_ENV_1: Workflow Env 1
@@ -10,6 +10,7 @@ jobs:
   test-all:
     name: Test Reproducer
     runs-on: ubuntu-20.04
+    container: ''
     env:
       job_ENV_1: Job Env 1
       job_ENV_2: Job Env 2
@@ -319,69 +320,94 @@ jobs:
         shell: bash
       - name: Test Contexts (github)
         run: |
-          if [[ "${{ github.api_url }}" != "https://api.github.com" ]]; then
-            echo "api_url failed" && exit 1
+          actor="${{ github.actor }}"
+          if [[ $actor != "guan-kevin" ]]; then
+            echo "actor failed: $actor" && exit 1
           fi
 
-          if [[ "${{ github.event_name }}" != "push" ]]; then
-            echo "event_name failed" && exit 1
+          api_url="${{ github.api_url }}"
+          if [[ $api_url != "https://api.github.com" ]]; then
+            echo "api_url failed: $api_url" && exit 1
+          fi
+
+          event_name="${{ github.event_name }}"
+          if [[ $event_name != "push" ]]; then
+            echo "event_name failed: $event_name" && exit 1
           fi
    
-          if [[ "${{ github.graphql_url }}" != "https://api.github.com/graphql" ]]; then
-              echo "graphql_url failed" && exit 1
+          graphql_url="${{ github.graphql_url }}"
+          if [[ $graphql_url != "https://api.github.com/graphql" ]]; then
+              echo "graphql_url failed: $graphql_url" && exit 1
           fi
 
-          if [[ "${{ github.job }}" != "test-contexts" ]]; then
-            echo "job failed" && exit 0
+          job="${{ github.job }}"
+          if [[ $job != "test-contexts" ]]; then
+            echo "job failed: $job" && exit 0
           fi
 
-          if [[ "${{ github.ref }}" != "refs/heads/main" ]]; then
-              echo "ref failed" && exit 1
+          ref="${{ github.ref }}"
+          if [[ $ref != "refs/heads/main" ]]; then
+              echo "ref failed: $ref" && exit 1
           fi
 
-          if [[ "${{ github.ref_name }}" != "main" ]]; then
-              echo "ref_name failed" && exit 1
+          ref_name="${{ github.ref_name }}"
+          if [[ $ref_name != "main" ]]; then
+              echo "ref_name failed: $ref_name" && exit 1
           fi
 
-          if [[ "${{ github.ref_protected }}" != false ]]; then
-              echo "ref_protected failed" && exit 1
+          ref_protected="${{ github.ref_protected }}"
+          if [[ $ref_protected != false ]]; then
+              echo "ref_protected failed: $ref_protected" && exit 1
           fi
 
-          if [[ "${{ github.ref_type }}" != "branch" ]]; then
-              echo "ref_type failed" && exit 1
+          ref_type="${{ github.ref_type }}"
+          if [[ $ref_type != "branch" ]]; then
+              echo "ref_type failed: $ref_type" && exit 1
           fi
 
-          if [[ "${{ github.repository }}" != "guan-kevin/hunting-ground4.0" ]]; then
-              echo "repository failed" && exit 1
+          repository="${{ github.repository }}"
+          if [[ $repository != "guan-kevin/hunting-ground4.0" ]]; then
+              echo "repository failed: $repository" && exit 1
           fi
 
-          if [[ "${{ github.repository_owner }}" != "guan-kevin" ]]; then
-              echo "repository_owner failed" && exit 1
+          repository_owner="${{ github.repository_owner }}"
+          if [[ $repository_owner != "guan-kevin" ]]; then
+              echo "repository_owner failed: $repository_owner" && exit 1
           fi
 
-          if [[ "${{ github.repositoryUrl }}" != "git://github.com/guan-kevin/hunting-ground4.0.git" ]]; then
-              echo "repositoryUrl failed" && exit 1
+          repositoryUrl="${{ github.repositoryUrl }}"
+          if [[ $repositoryUrl != "git://github.com/guan-kevin/hunting-ground4.0.git" ]]; then
+              echo "repositoryUrl failed: $repositoryUrl" && exit 1
           fi
 
-          if [[ "${{ github.server_url }}" != "https://github.com" ]]; then
-              echo "server_url failed" && exit 1
+          server_url="${{ github.server_url }}"
+          if [[ $server_url != "https://github.com" ]]; then
+              echo "server_url failed: $server_url" && exit 1
           fi
 
-          if [[ "${{ github.workflow }}" != "Reproducer Test" ]]; then
-              echo "workflow failed" && exit 1
+          triggering_actor="${{ github.triggering_actor }}"
+          if [[ $triggering_actor" != "guan-kevin" ]]; then
+              echo "triggering_actor failed: $triggering_actor" && exit 1
+          fi
+
+          workflow="${{ github.workflow }}"
+          if [[ $workflow != "Reproducer Test" ]]; then
+              echo "workflow failed: $workflow" && exit 1
           fi
       - name: Test Contexts (env)
         run: |
-          if [[ "${{ env.component }}" != "reproducer" ]]; then
-              echo "env failed" && exit 1
+          component="${{ env.component }}"
+          if [[ $component != "reproducer" ]]; then
+              echo "env failed: $component" && exit 1
           fi
         env:
           component: reproducer
       - name: Test Contexts (job)
         id: job-test
         run: |
-          if [[ "${{ job.status }}" != "success" ]]; then
-              echo "status failed" && exit 1
+          status="${{ job.status }}"
+          if [[ $status != "success" ]]; then
+              echo "status failed: $status" && exit 1
           fi
       - name: Pre Test Contexts (steps)
         id: steps-test
@@ -389,29 +415,40 @@ jobs:
         continue-on-error: true
       - name: Test Contexts (steps)
         run: |
-          if [[ "${{ steps.job-test.conclusion }}" != "success" ]]; then
-              echo "concolusion 1 failed" && exit 1
+          conclusion1="${{ steps.job-test.conclusion }}"
+          if [[ $conclusion1 != "success" ]]; then
+              echo "concolusion 1 failed: $conclusion1" && exit 1
           fi
 
-          if [[ "${{ steps.job-test.outcome }}" != "success" ]]; then
-              echo "outcome 1 failed" && exit 1
+          outcome1="${{ steps.job-test.outcome }}"
+          if [[ $outcome1 != "success" ]]; then
+              echo "outcome 1 failed: $outcome1" && exit 1
           fi
 
-          if [[ "${{ steps.steps-test.conclusion }}" != "success" ]]; then
-              echo "concolusion 2 failed" && exit 1
+          conclusion2="${{ steps.steps-test.conclusion }}"
+          if [[ $conclusion2 != "success" ]]; then
+              echo "concolusion 2 failed: $conclusion2" && exit 1
           fi
 
-          if [[ "${{ steps.steps-test.outcome }}" != "failure" ]]; then
-              echo "outcome 2 failed" && exit 1
+          outcome2="${{ steps.steps-test.outcome }}"
+          if [[ $outcome2!= "failure" ]]; then
+              echo "outcome 2 failed: $outcome2" && exit 1
           fi 
       - name: Test Contexts (runner)
         run: |
-          if [[ "${{ runner.os }}" != "Linux" ]]; then
-              echo "os failed" && exit 1
+          os="${{ runner.os }}"
+          if [[ $os != "Linux" ]]; then
+              echo "os failed: $os" && exit 1
           fi
 
-          if [[ "${{ runner.arch }}" != "X64" ]]; then
-              echo "arch failed" && exit 1
+          arch="${{ runner.arch }}"
+          if [[ $arch != "X64" ]]; then
+              echo "arch failed: $arch" && exit 1
+          fi
+
+          tool_cache="${{ runner.tool_cache }}"
+          if [[ $tool_cache != "/opt/hostedtoolcache" ]]; then
+              echo "tool_cache failed: $tool_cache" && exit 1
           fi
 
   test-functions:
@@ -620,4 +657,3 @@ jobs:
             exit(1);
           print("Test working-directory OK")
         working-directory: test
-        
