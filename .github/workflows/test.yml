@@ -434,7 +434,7 @@ jobs:
           fi
 
           outcome2="${{ steps.steps-test.outcome }}"
-          if [[ $outcome2!= "failure" ]]; then
+          if [[ $outcome2 != "failure" ]]; then
               echo "outcome 2 failed: $outcome2" && exit 1
           fi 
       - name: Test Contexts (runner)
@@ -660,3 +660,4 @@ jobs:
             exit(1);
           print("Test working-directory OK")
         working-directory: test
+        
