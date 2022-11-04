@@ -10,7 +10,10 @@ jobs:
   test-all:
     name: Test Reproducer
     runs-on: ubuntu-20.04
-    container: ''
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['', 'python:3']
     env:
       job_ENV_1: Job Env 1
       job_ENV_2: Job Env 2
@@ -386,7 +389,7 @@ jobs:
           fi
 
           triggering_actor="${{ github.triggering_actor }}"
-          if [[ $triggering_actor" != "guan-kevin" ]]; then
+          if [[ $triggering_actor != "guan-kevin" ]]; then
               echo "triggering_actor failed: $triggering_actor" && exit 1
           fi
 
