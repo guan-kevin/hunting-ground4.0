@@ -1,0 +1,783 @@
+name: Reproducer Test For Pull Request
+on: pull_request
+
+defaults:
+  run:
+    shell: bash
+    
+env:
+  workflow_ENV_1: Workflow Env 1
+  workflow_ENV_2: Workflow Env 2
+  workflow_ENV_3: Workflow Env 3
+
+jobs:
+  test-all:
+    name: Test Reproducer (all)
+    runs-on: ubuntu-20.04
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['', 'python:3']
+    env:
+      job_ENV_1: Job Env 1
+      job_ENV_2: Job Env 2
+      workflow_ENV_2: Job Env 3
+    steps:
+      - uses: actions/checkout@v3
+      - name: Failed build
+        run: |
+          exit $(cat status.txt)
+        shell: bash
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8' 
+      - name: Set Up Test Environment
+        run: |
+          mkdir test
+          echo "LARGER_THAN_0=1" >> $GITHUB_ENV
+          echo "larger_than_0=2" >> $GITHUB_ENV
+          echo 'SMALLER_THAN_0<<1!@#$aA[];|\~`.,?/+-)(*&^%<>' >> $GITHUB_ENV
+          echo "-1" >> $GITHUB_ENV
+          echo '1!@#$aA[];|\~`.,?/+-)(*&^%<>' >> $GITHUB_ENV
+      - name: Test Environment Variables
+        env:
+          step_ENV_1: Step Env 1
+          job_ENV_2: Step Env 2
+          workflow_ENV_3: Step Env 3
+        run: |
+          if [[ $workflow_ENV_1 != "Workflow Env 1" ]]; then
+            echo "Incorrect workflow_ENV_1" && exit 1
+          fi
+          if [[ $workflow_ENV_2 != "Job Env 3" ]]; then
+            echo "Incorrect workflow_ENV_2" && exit 1
+          fi
+          if [[ $workflow_ENV_3 != "Step Env 3" ]]; then
+            echo "Incorrect workflow_ENV_3" && exit 1
+          fi
+          if [[ $job_ENV_1 != "Job Env 1" ]]; then
+            echo "Incorrect job_ENV_1" && exit 1
+          fi
+          if [[ $job_ENV_2 != "Step Env 2" ]]; then
+            echo "Incorrect job_ENV_2" && exit 1
+          fi
+          if [[ $step_ENV_1 != "Step Env 1" ]]; then
+            echo "Incorrect step_ENV_1" && exit 1
+          fi
+          if [[ $LARGER_THAN_0 != 1 ]]; then
+            echo "Incorrect LARGER_THAN_0" && exit 1
+          fi
+          if [[ $larger_than_0 != 2 ]]; then
+            echo "Incorrect larger_than_0" && exit 1
+          fi
+          if [[ $SMALLER_THAN_0 != -1 ]]; then
+            echo "Incorrect SMALLER_THAN_0" && exit 1
+          fi
+          echo "Test Environment Variables OK!"
+      - name: Test shell and working-directory
+        run: |
+          import os
+          if not os.getcwd().endswith('/test'):
+            print("Incorrect working directory")
+            exit(1);
+          print("Test shell and working-directory OK")
+        shell: python
+        working-directory: test
+      - name: Test if statement using not equal
+        id: test_not_equal
+        if: ${{ env.SMALLER_THAN_0 != 0 }}
+        run: echo "test_not_equal=1" >> $GITHUB_ENV
+      - name: Test if statement using not equal (again)
+        if: ${{ env.LARGER_THAN_0 != 1 }}
+        run: |
+          echo "Test failed: LARGER_THAN_0 != 1 should be false." && exit 1
+      - name: Test if statement using not equal
+        id: test_not_equal_again
+        if: env.SMALLER_THAN_0 != 0
+        run: echo "test_not_equal_again=1" >> $GITHUB_ENV
+      - name: Test if statement using not equal without {{ }} (again)
+        if: env.LARGER_THAN_0 != 1
+        run: |
+          echo "Test failed: LARGER_THAN_0 != 1 without {{ }} should be false." && exit 1
+      - name: Test if statement using less than
+        id: test_less_than
+        if: ${{ env.SMALLER_THAN_0 < 0 }}
+        run: echo "test_less_than=1" >> $GITHUB_ENV
+      - name: Test if statement using less than (again)
+        if: ${{ env.SMALLER_THAN_0 < -2 }}
+        run: |
+          echo "Test failed: SMALLER_THAN_0 < -2 should be false." && exit 1
+      - name: Test if statement using less than or equal
+        id: test_less_than_or_equal
+        if: ${{ env.SMALLER_THAN_0 <= -1 }}
+        run: echo "test_less_than_or_equal=1" >> $GITHUB_ENV
+      - name: Test if statement using less than or equal (again)
+        if: ${{ env.SMALLER_THAN_0 <= -2 }}
+        run: |
+          echo "Test failed: SMALLER_THAN_0 <= -2 should be false." && exit 1
+      - name: Test if statement using greater than
+        id: test_greater_than
+        if: ${{ env.SMALLER_THAN_0 > -2 }}
+        run: echo "test_greater_than=1" >> $GITHUB_ENV
+      - name: Test if statement using greater than (again)
+        if: ${{ env.SMALLER_THAN_0 > 0 }}
+        run: |
+          echo "Test failed: SMALLER_THAN_0 > 0 should be false." && exit 1
+      - name: Test if statement using greater than or equal
+        id: test_greater_than_or_equal
+        if: ${{ env.SMALLER_THAN_0 >= -1 }}
+        run: echo "test_greater_than_or_equal=1" >> $GITHUB_ENV
+      - name: Test if statement using greater than or equal (again)
+        if: ${{ env.SMALLER_THAN_0 >= 0 }}
+        run: |
+          echo "Test failed: SMALLER_THAN_0 >= 0 should be false." && exit 1
+      - name: Test if statement using equal
+        id: test_equal
+        if: ${{ env.SMALLER_THAN_0 == -1 }}
+        run: echo "test_equal=1" >> $GITHUB_ENV
+      - name: Test if statement using equal (again)
+        if: ${{ env.SMALLER_THAN_0 == 0 }}
+        run: |
+          echo "Test failed: SMALLER_THAN_0 == 0 should be false." && exit 1
+      - name: Test if statement using not
+        id: test_not
+        if: ${{ !(env.SMALLER_THAN_0 == 0) }}
+        run: echo "test_not=1" >> $GITHUB_ENV
+      - name: Test if statement using not (again)
+        if: ${{ !(env.SMALLER_THAN_0 == -1) }}
+        run: |
+          echo "Test failed: SMALLER_THAN_0 == -1 should be true." && exit 1
+      - name: Test if statement using and
+        id: test_and
+        if: ${{ env.LARGER_THAN_0 == 1 && env.SMALLER_THAN_0 == -1 }}
+        run: echo "test_and=1" >> $GITHUB_ENV
+      - name: Test if statement using and (again)
+        if: ${{ env.LARGER_THAN_0 == 0 && env.SMALLER_THAN_0 == 0 }}
+        run: |
+          echo "Test failed: LARGER_THAN_0 == 0 and SMALLER_THAN_0 == 0 should be false." && exit 1
+      - name: Test if statement using or
+        id: test_or
+        if: ${{ env.LARGER_THAN_0 == 0 || env.SMALLER_THAN_0 == -1 }}
+        run: echo "test_or=1" >> $GITHUB_ENV
+      - name: Test if statement using or (again)
+        if: ${{ env.LARGER_THAN_0 == 0 || env.SMALLER_THAN_0 == 0 }}
+        run: |
+          echo "Test failed: LARGER_THAN_0 == 0 or SMALLER_THAN_0 == 0 should be false." && exit 1
+      - name: Checking test result
+        if: always()
+        run: |
+          if [[ $test_not_equal != 1 ]]; then
+            echo "Incorrect test_not_equal" && exit 1
+          elif [[ $test_not_equal_again != 1 ]]; then
+            echo "Incorrect test_not_equal_again" && exit 1
+          elif [[ $test_less_than != 1 ]]; then
+            echo "Incorrect test_less_than" && exit 1
+          elif [[ $test_less_than_or_equal != 1 ]]; then
+            echo "Incorrect test_less_than_or_equal" && exit 1
+          elif [[ $test_greater_than != 1 ]]; then
+            echo "Incorrect test_greater_than" && exit 1
+          elif [[ $test_greater_than_or_equal != 1 ]]; then
+            echo "Incorrect test_greater_than_or_equal" && exit 1
+          elif [[ $test_equal != 1 ]]; then
+            echo "Incorrect test_equal" && exit 1
+          elif [[ $test_not != 1 ]]; then
+            echo "Incorrect test_not" && exit 1
+          elif [[ $test_and != 1 ]]; then
+            echo "Incorrect test_and" && exit 1
+          elif [[ $test_or != 1 ]]; then
+            echo "Incorrect test_or" && exit 1
+          fi
+      - name: Test Literals
+        if: always()
+        run: |
+          temp="${{ null }}"
+          error=false
+          if [[ -z "$temp" ]]; then
+            echo "OK null"
+          else
+            echo "Incorrect null"
+            error=true
+          fi
+
+          if [[ ${{ false }} == false ]]; then
+            echo "OK false"
+          else
+            echo "Incorrect false"
+            error=true
+          fi
+
+          if [[ ${{ true }} == true ]]; then
+            echo "OK true"
+          else
+            echo "Incorrect true"
+            error=true
+          fi
+
+          if [[ ${{ 123 }} == 123 ]]; then
+            echo "OK integer"
+          else
+            echo "Incorrect integer"
+            error=true
+          fi
+
+          if [[ ${{ -1.23 }} == -1.23 ]]; then
+            echo "OK float"
+          else
+            echo "Incorrect float"
+            error=true
+          fi
+
+          if [[ ${{ 0xff }} == 255 ]]; then
+            echo "OK hex"
+          else
+            echo "Incorrect hex"
+            error=true
+          fi
+
+          if [[ ${{ -2.99e-2 }} == -0.0299 ]]; then
+            echo "OK exponential"
+          else
+            echo "Incorrect exponential"
+            error=true
+          fi
+          
+          if [[ ${{ 'Hello' }} == "Hello" ]]; then
+            echo "OK string"
+          else
+            echo "Incorrect string"
+            error=true
+          fi
+
+          if [[ $error == true ]]; then
+            exit 1
+          fi
+      - name: Test continue-on-error
+        run: exit 1
+        continue-on-error: true
+      - name: Verify continue-on-error
+        run: echo "Test continue-on-error OK"
+      - name: Test path
+        run: |
+          if [[ "${{ github.workspace }}/test" != $(pwd) ]];then
+            echo "Test set up failed."
+          fi
+
+          echo "echo \"Test path OK\"" >> test.sh
+          chmod u+x test.sh
+          echo "$(pwd)" >> $GITHUB_PATH
+        working-directory: test
+      - name: Verify path
+        run: |
+          if [[ "Test path OK" == $(test.sh) ]];then
+            echo "Test path OK"
+          else
+            echo "Test path failed"
+          fi
+      - name: Test predefined action (javascript, branch)
+        uses: guan-kevin/javascript-action-tester@v1
+        with:
+          test_input-1: -1
+          test_input-2: -2
+          test_input-3: -3
+          test_input-4: -4
+      - name: Test predefined action (javascript, tag)
+        uses: guan-kevin/javascript-action-tester@v2
+        with:
+          test_input-4: 4
+      - name: Test predefined action (javascript, sha)
+        uses: guan-kevin/javascript-action-tester@23b56f8e49c1a891d07594eb8e254f2ef8788089
+      - name: Test predefined action (javascript, subdirectory)
+        uses: guan-kevin/javascript-action-tester/subdirectory@main
+        with:
+          test_input-1: -1
+          test_input-2: -2
+          test_input-3: -3
+          test_input-4: -4
+      - name: Test predefined action (javascript, same repo)
+        uses: ./.github/actions/test
+        with:
+          test_input-1: -1
+          test_input-2: -2
+          test_input-3: -3
+          test_input-4: -4
+      - name: Test predefined action (composite)
+        uses: guan-kevin/composite-action-tester@main
+        with:
+          test_input: 1
+      - name: Test actions/checkout (ref)
+        uses: actions/checkout@v3
+        with:
+          repository: guan-kevin/javascript-action-tester
+          path: test3
+      - name: Verify actions/checkout (ref)
+        run: |
+          cd test3
+          ./test3.sh
+        env:
+          HELLO: world
+
+
+  test-contexts:
+    name: Test reproducer (contexts)
+    runs-on: ubuntu-20.04
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['', 'python:3']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Failed build
+        run: |
+          exit $(cat status.txt)
+        shell: bash
+      - name: Test Contexts (github)
+        run: |
+          actor="${{ github.actor }}"
+          if [[ $actor != "guan-kevin" ]]; then
+            echo "actor failed: $actor" && exit 1
+          fi
+
+          api_url="${{ github.api_url }}"
+          if [[ $api_url != "https://api.github.com" ]]; then
+            echo "api_url failed: $api_url" && exit 1
+          fi
+
+          base_ref="${{ github.base_ref }}"
+          if [[ $base_ref != "main" ]]; then
+            echo "base_ref failed: $base_ref" && exit 1
+          fi
+          
+          event_name="${{ github.event_name }}"
+          if [[ $event_name != "pull_request" ]]; then
+            echo "event_name failed: $event_name" && exit 1
+          fi
+   
+          graphql_url="${{ github.graphql_url }}"
+          if [[ $graphql_url != "https://api.github.com/graphql" ]]; then
+              echo "graphql_url failed: $graphql_url" && exit 1
+          fi
+          
+          head_ref="${{ github.head_ref }}"
+          if [[ $head_ref != "pull_request" ]]; then
+            echo "head_ref failed: $head_ref" && exit 1
+          fi
+
+          job="${{ github.job }}"
+          if [[ $job != "test-contexts" ]]; then
+            echo "job failed: $job" && exit 0
+          fi
+
+          ref="${{ github.ref }}"
+          if [[ $ref != "refs/heads/main" ]]; then
+              echo "ref failed: $ref" && exit 1
+          fi
+
+          ref_name="${{ github.ref_name }}"
+          if [[ $ref_name != "main" ]]; then
+              echo "ref_name failed: $ref_name" && exit 1
+          fi
+
+          ref_protected="${{ github.ref_protected }}"
+          if [[ $ref_protected != false ]]; then
+              echo "ref_protected failed: $ref_protected" && exit 1
+          fi
+
+          ref_type="${{ github.ref_type }}"
+          if [[ $ref_type != "branch" ]]; then
+              echo "ref_type failed: $ref_type" && exit 1
+          fi
+
+          repository="${{ github.repository }}"
+          if [[ $repository != "guan-kevin/hunting-ground4.0" ]]; then
+              echo "repository failed: $repository" && exit 1
+          fi
+
+          repository_owner="${{ github.repository_owner }}"
+          if [[ $repository_owner != "guan-kevin" ]]; then
+              echo "repository_owner failed: $repository_owner" && exit 1
+          fi
+
+          repositoryUrl="${{ github.repositoryUrl }}"
+          if [[ $repositoryUrl != "git://github.com/guan-kevin/hunting-ground4.0.git" ]]; then
+              echo "repositoryUrl failed: $repositoryUrl" && exit 1
+          fi
+
+          server_url="${{ github.server_url }}"
+          if [[ $server_url != "https://github.com" ]]; then
+              echo "server_url failed: $server_url" && exit 1
+          fi
+
+          triggering_actor="${{ github.triggering_actor }}"
+          if [[ $triggering_actor != "guan-kevin" ]]; then
+              echo "triggering_actor failed: $triggering_actor" && exit 1
+          fi
+
+          workflow="${{ github.workflow }}"
+          if [[ $workflow != "Reproducer Test For Pull Request" ]]; then
+              echo "workflow failed: $workflow" && exit 1
+          fi
+      - name: Test Contexts (env)
+        run: |
+          component="${{ env.component }}"
+          if [[ $component != "reproducer" ]]; then
+              echo "env failed: $component" && exit 1
+          fi
+        env:
+          component: reproducer
+      - name: Test Contexts (job)
+        id: job-test
+        run: |
+          status="${{ job.status }}"
+          if [[ $status != "success" ]]; then
+              echo "status failed: $status" && exit 1
+          fi
+      - name: Pre Test Contexts (steps)
+        id: steps-test
+        run: exit 1
+        continue-on-error: true
+      - name: Test Contexts (steps)
+        run: |
+          conclusion1="${{ steps.job-test.conclusion }}"
+          if [[ $conclusion1 != "success" ]]; then
+              echo "concolusion 1 failed: $conclusion1" && exit 1
+          fi
+
+          outcome1="${{ steps.job-test.outcome }}"
+          if [[ $outcome1 != "success" ]]; then
+              echo "outcome 1 failed: $outcome1" && exit 1
+          fi
+
+          conclusion2="${{ steps.steps-test.conclusion }}"
+          if [[ $conclusion2 != "success" ]]; then
+              echo "concolusion 2 failed: $conclusion2" && exit 1
+          fi
+
+          outcome2="${{ steps.steps-test.outcome }}"
+          if [[ $outcome2 != "failure" ]]; then
+              echo "outcome 2 failed: $outcome2" && exit 1
+          fi 
+      - name: Test Contexts (runner)
+        run: |
+          os="${{ runner.os }}"
+          if [[ $os != "Linux" ]]; then
+              echo "os failed: $os" && exit 1
+          fi
+
+          arch="${{ runner.arch }}"
+          if [[ $arch != "X64" ]]; then
+              echo "arch failed: $arch" && exit 1
+          fi
+
+          tool_cache="${{ runner.tool_cache }}"
+          if [[ $tool_cache != "/opt/hostedtoolcache" ]]; then
+              echo "tool_cache failed: $tool_cache" && exit 1
+          fi
+
+  test-environment-variables:
+    name: Test reproducer (environment variables)
+    runs-on: ubuntu-20.04
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['', 'python:3']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Failed build
+        run: |
+          exit $(cat status.txt)
+        shell: bash
+      - name: Test Environment Variables
+        run: |
+          if [[ $CI != true ]]; then
+              echo "CI failed: $CI" && exit 1
+          fi
+          
+          if [[ $GITHUB_ACTIONS != true ]]; then
+              echo "GITHUB_ACTIONS failed: $GITHUB_ACTIONS" && exit 1
+          fi
+          
+          if [[ $GITHUB_ACTOR != "guan-kevin" ]]; then
+              echo "GITHUB_ACTOR failed: $GITHUB_ACTOR" && exit 1
+          fi
+          
+          if [[ $GITHUB_API_URL != "https://api.github.com" ]]; then
+              echo "GITHUB_API_URL failed: $GITHUB_API_URL" && exit 1
+          fi
+          
+          if [[ $GITHUB_BASE_REF != "main" ]]; then
+              echo "GITHUB_BASE_REF failed: $GITHUB_BASE_REF" && exit 1
+          fi
+          
+          if [[ $GITHUB_EVENT_NAME != "pull_request" ]]; then
+              echo "GITHUB_EVENT_NAME failed: $GITHUB_EVENT_NAME" && exit 1
+          fi
+          
+          if [[ $GITHUB_GRAPHQL_URL != "https://api.github.com/graphql" ]]; then
+              echo "GITHUB_GRAPHQL_URL failed: $GITHUB_GRAPHQL_URL" && exit 1
+          fi
+          
+          if [[ $GITHUB_HEAD_REF != "pull_request" ]]; then
+              echo "GITHUB_HEAD_REF failed: $GITHUB_HEAD_REF" && exit 1
+          fi
+          
+          if [[ $GITHUB_JOB != "test-environment-variables" ]]; then
+              echo "GITHUB_JOB failed: $GITHUB_JOB" && exit 1
+          fi
+          
+          if [[ $GITHUB_REF != "refs/pull/1/merge" ]]; then
+              echo "GITHUB_REF failed: $GITHUB_REF" && exit 1
+          fi
+
+          if [[ $GITHUB_REF_NAME != "1/merge" ]]; then
+              echo "GITHUB_REF_NAME failed: $GITHUB_REF_NAME" && exit 1
+          fi
+          
+          if [[ $GITHUB_REF_PROTECTED != false ]]; then
+              echo "GITHUB_REF_PROTECTED failed: $GITHUB_REF_PROTECTED" && exit 1
+          fi
+          
+          if [[ $GITHUB_REF_TYPE != "branch" ]]; then
+              echo "GITHUB_REF_TYPE failed: $GITHUB_REF_TYPE" && exit 1
+          fi
+          
+          if [[ $GITHUB_REPOSITORY != "guan-kevin/hunting-ground4.0" ]]; then
+              echo "GITHUB_REPOSITORY failed: $GITHUB_REPOSITORY" && exit 1
+          fi
+
+          if [[ $GITHUB_REPOSITORY_OWNER != "guan-kevin" ]]; then
+              echo "GITHUB_REPOSITORY_OWNER failed: $GITHUB_REPOSITORY_OWNER" && exit 1
+          fi
+          
+          if [[ $GITHUB_SERVER_URL != "https://github.com" ]]; then
+              echo "GITHUB_SERVER_URL failed: $GITHUB_SERVER_URL" && exit 1
+          fi
+          
+          if [[ $GITHUB_WORKFLOW != "Reproducer Test For Pull Request" ]]; then
+              echo "GITHUB_WORKFLOW failed: $GITHUB_WORKFLOW" && exit 1
+          fi
+          
+          if [[ $RUNNER_ARCH != "X64" ]]; then
+              echo "RUNNER_ARCH failed: $RUNNER_ARCH" && exit 1
+          fi
+          
+          if [[ $RUNNER_OS != "Linux" ]]; then
+              echo "RUNNER_OS failed: $RUNNER_OS" && exit 1
+          fi
+          
+  test-functions:
+    name: Test Reproducer (expression fucntions)
+    runs-on: ubuntu-20.04
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['', 'python:3']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Failed build
+        run: |
+          exit $(cat status.txt)
+        shell: bash
+      - name: Test contains
+        run: |
+          if [[ ${{ contains(env.workflow_ENV_1, '1') }} == true ]]; then
+            echo "contains_1=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ ${{ contains(env.workflow_ENV_2, '1') }} != true ]]; then
+            echo "contains_2=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ ${{ contains('hello world', 'hello') }} == true ]]; then
+            echo "contains_3=1" >> $GITHUB_ENV
+          fi
+      - name: Test startsWith
+        run: |
+          if [[ ${{ startsWith(env.workflow_ENV_1, 'Work') }} == true ]]; then
+            echo "startsWith_1=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ ${{ startsWith(env.workflow_ENV_2, 'Job') }} != true ]]; then
+            echo "startsWith_2=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ ${{ startsWith('Hello world', 'hello') }} == true ]]; then
+            echo "startsWith_3=1" >> $GITHUB_ENV
+          fi
+      - name: Test endsWith
+        run: |
+          if [[ ${{ endsWith(env.workflow_ENV_1, '1') }} == true ]]; then
+            echo "endsWith_1=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ ${{ endsWith(env.workflow_ENV_2, '1') }} != true ]]; then
+            echo "endsWith_2=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ ${{ endsWith('Hello world', 'World') }} == true ]]; then
+            echo "endsWith_3=1" >> $GITHUB_ENV
+          fi
+      - name: Test format
+        run: |
+          if [[ "${{ format('Variable is {0}', env.workflow_ENV_1) }}" == "Variable is Workflow Env 1" ]]; then
+            echo "format_1=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ "${{ format('{0} < {1}', env.workflow_ENV_1, env.workflow_ENV_2) }}" == "Workflow Env 1 < Workflow Env 2" ]]; then
+            echo "format_2=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ "${{ format('{{Hello {0} {1} {2}!}}', 'Mona', 'the', 'Octocat') }}" == "{Hello Mona the Octocat!}" ]]; then
+            echo "format_3=1" >> $GITHUB_ENV
+          fi
+      - name: Test join/fromJSON
+        run: |
+          if [[ "${{ join(fromJson('["1", "2", "3"]'), '-') }}" == "1-2-3" ]]; then
+            echo "join_1=1" >> $GITHUB_ENV
+          fi
+  
+          if [[ "${{ join(fromJson('["1", "2", "3"]')) }}" == "1,2,3" ]]; then
+            echo "join_2=1" >> $GITHUB_ENV
+          fi
+      - name: Test success
+        if: success()
+        run: echo "success=1" >> $GITHUB_ENV
+      - name: Test always
+        if: always()
+        run: echo "always=1" >> $GITHUB_ENV
+      - name: Test failure
+        if: failure()
+        run: echo "failure=1" >> $GITHUB_ENV
+      - name: Check Test Result
+        run: |
+          if [[ $contains_1 != 1 ]]; then
+            echo "Incorrect contains_1" && exit 1
+          elif [[ $contains_2 != 1 ]]; then
+            echo "Incorrect contains_2" && exit 1
+          elif [[ $contains_3 != 1 ]]; then
+            echo "Incorrect contains_3" && exit 1
+          elif [[ $startsWith_1 != 1 ]]; then
+            echo "Incorrect startsWith_1" && exit 1
+          elif [[ $startsWith_2 != 1 ]]; then
+            echo "Incorrect startsWith_2" && exit 1
+          elif [[ $startsWith_3 != 1 ]]; then
+            echo "Incorrect startsWith_3" && exit 1
+          elif [[ $endsWith_1 != 1 ]]; then
+            echo "Incorrect endsWith_1" && exit 1
+          elif [[ $endsWith_2 != 1 ]]; then
+            echo "Incorrect endsWith_2" && exit 1
+          elif [[ $endsWith_3 != 1 ]]; then
+            echo "Incorrect endsWith_3" && exit 1
+          elif [[ $format_1 != 1 ]]; then
+            echo "Incorrect format_1" && exit 1
+          elif [[ $format_2 != 1 ]]; then
+            echo "Incorrect format_2" && exit 1
+          elif [[ $format_3 != 1 ]]; then
+            echo "Incorrect format_3" && exit 1
+          elif [[ $join_1 != 1 ]]; then
+            echo "Incorrect join_1" && exit 1
+          elif [[ $join_2 != 1 ]]; then
+            echo "Incorrect join_2" && exit 1
+          elif [[ $success != 1 ]]; then
+            echo "Incorrect success" && exit 1
+          elif [[ $always != 1 ]]; then
+            echo "Incorrect always" && exit 1
+          elif [[ $failure == 1 ]]; then
+            echo "Incorrect failure" && exit 1
+          fi
+  
+  test-checkout:
+    name: Test Reproducer (checkout)
+    runs-on: ubuntu-20.04
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['', 'python:3']
+    env:
+      LARGER_THAN_0: 1
+    steps:
+      - uses: actions/checkout@v3
+      - name: Failed build
+        run: |
+          exit $(cat status.txt)
+        shell: bash
+      - name: Test actions/checkout (ref, submodule)
+        uses: actions/checkout@v3
+        with:
+          repository: guan-kevin/javascript-action-tester
+          path: test4
+          submodules: true
+      - name: Verify actions/checkout (ref, submodule)
+        run: |
+          cd test4/submodule-tester
+          chmod u+x test4.sh
+          ./test4.sh
+        env:
+          HELLO: world
+      - name: Test actions/checkout (ref, submodule, ref)
+        uses: actions/checkout@v3
+        with:
+          repository: guan-kevin/javascript-action-tester
+          path: test5
+          submodules: true
+          ref: submodule
+      - name: Verify actions/checkout (ref, submodule, ref)
+        run: |
+          cd test5/submodule-tester
+          chmod u+x test5.sh
+          ./test5.sh
+        env:
+          HELLO: reproducer
+      - name: Set up actions/checkout (path)
+        run: mkdir new-directory
+      - name: Test actions/checkout (path)
+        uses: actions/checkout@v3
+        with:
+          repository: guan-kevin/javascript-action-tester
+          path: new-directory/test6
+      - name: Verify actions/checkout (path)
+        run: |
+          print("Test OK")
+        shell: python
+        working-directory: new-directory/test6
+
+  test-defaults:
+    name: Test Reproducer (defaults)
+    runs-on: ubuntu-20.04
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['', 'python:3']
+    defaults:
+      run:
+        shell: python
+        working-directory: python
+    steps:
+      - uses: actions/checkout@v3
+      - name: Failed build
+        run: |
+          exit $(cat status.txt)
+        shell: bash
+        working-directory: .
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+      - name: Test defaults.run.shell and defaults.run.working-directory
+        run: |
+          import os
+          if not os.getcwd().endswith('/python'):
+            print("Incorrect working directory")
+            exit(1);
+          print("Test defaults.run.shell and defaults.run.working-directory OK")
+      - name: Test Override shell
+        run: |
+          cd ..
+          mkdir test
+          echo "Test Override shell OK"
+        shell: bash
+      - name: Test override working-directory
+        run: |
+          import os
+          if not os.getcwd().endswith('/test'):
+            print("Incorrect working directory")
+            exit(1);
+          print("Test working-directory OK")
+        working-directory: test
