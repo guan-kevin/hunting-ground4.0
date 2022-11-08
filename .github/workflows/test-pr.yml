@@ -562,6 +562,95 @@ jobs:
               echo "RUNNER_OS failed: $RUNNER_OS" && exit 1
           fi
 
+  test-payload:
+    name: Test Reproducer (payload)
+    runs-on: ubuntu-20.04
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['', 'python:3']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Failed build
+        run: |
+          exit $(cat status.txt)
+      - name: Test github.event
+        run: |
+          action="${{ github.event.action }}"
+          if [[ $action != "synchronize" ]]; then
+              echo "action failed: $action" && exit 1
+          fi
+          
+          number="${{ github.event.number }}"
+          if [[ $number != 1 ]]; then
+              echo "number failed: $number" && exit 1
+          fi
+          
+          pr_number="${{ github.event.pull_request.number }}"
+          if [[ $pr_number != 1 ]]; then
+              echo "pr_number failed: $pr_number" && exit 1
+          fi
+          
+          pr_user_owner="${{ github.event.pull_request.user.login }}"
+          if [[ $pr_user_owner != "guan-kevin" ]]; then
+              echo "pr_user_owner failed: $pr_user_owner" && exit 1
+          fi
+          
+          pr_head_ref="${{ github.event.pull_request.head.ref }}"
+          if [[ $pr_head_ref != "pull_request" ]]; then
+              echo "pr_head_ref failed: $pr_head_ref" && exit 1
+          fi
+          
+          pr_head_user="${{ github.event.pull_request.head.user.login }}"
+          if [[ $pr_head_user != "guan-kevin" ]]; then
+              echo "pr_head_user failed: $pr_head_user" && exit 1
+          fi
+          
+          pr_head_repo="${{ github.event.pull_request.head.repo.full_name }}"
+          if [[ $pr_head_repo != "guan-kevin/hunting-ground4.0" ]]; then
+              echo "pr_head_repo failed: $pr_head_repo" && exit 1
+          fi
+          
+          pr_head_repo_owner="${{ github.event.pull_request.head.repo.owner.login }}"
+          if [[ $pr_head_repo_owner != "guan-kevin" ]]; then
+              echo "pr_head_repo_owner failed: $pr_head_repo_owner" && exit 1
+          fi
+
+          pr_base_ref="${{ github.event.pull_request.base.ref }}"
+          if [[ $pr_base_ref != "main" ]]; then
+              echo "pr_base_ref failed: $pr_base_ref" && exit 1
+          fi
+          
+          pr_base_user="${{ github.event.pull_request.base.user.login }}"
+          if [[ $pr_base_user != "guan-kevin" ]]; then
+              echo "pr_base_user failed: $pr_base_user" && exit 1
+          fi
+          
+          pr_base_repo="${{ github.event.pull_request.base.repo.full_name }}"
+          if [[ $pr_base_repo != "guan-kevin/hunting-ground4.0" ]]; then
+              echo "pr_base_repo failed: $pr_base_repo" && exit 1
+          fi
+          
+          pr_base_repo_owner="${{ github.event.pull_request.base.repo.owner.login }}"
+          if [[ $pr_base_repo_owner != "guan-kevin" ]]; then
+              echo "pr_base_repo_owner failed: $pr_base_repo_owner" && exit 1
+          fi
+
+          repository_full_name="${{ github.event.repository.full_name }}"
+          if [[ $repository_full_name != "guan-kevin/hunting-ground4.0" ]]; then
+              echo "repository_full_name failed: $repository_full_name" && exit 1
+          fi
+          
+          repository_owner="${{ github.event.repository.owner.login }}"
+          if [[ $repository_owner != "guan-kevin" ]]; then
+              echo "repository_owner failed: $repository_owner" && exit 1
+          fi
+          
+          sender_name="${{ github.event.sender.login }}"
+          if [[ $sender_name != "guan-kevin" ]]; then
+              echo "sender_name failed: $sender_name" && exit 1
+          fi
+
   test-functions:
     name: Test Reproducer (expression functions)
     runs-on: ubuntu-20.04
