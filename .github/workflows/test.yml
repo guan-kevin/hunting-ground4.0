@@ -547,6 +547,55 @@ jobs:
               echo "RUNNER_OS failed: $RUNNER_OS" && exit 1
           fi
 
+  test-payload:
+    name: Test Reproducer (payload)
+    runs-on: ubuntu-20.04
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['', 'python:3']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Failed build
+        run: |
+          exit $(cat status.txt)
+      - name: Test github.event
+        run: |
+          author_name="${{ github.event.head_commit.author.name }}"
+          if [[ $author_name != "Kevin Guan" ]]; then
+              echo "author_name failed: $author_name" && exit 1
+          fi
+          
+          author_username="${{ github.event.head_commit.author.username }}"
+          if [[ $author_username != "guan-kevin" ]]; then
+              echo "author_username failed: $author_username" && exit 1
+          fi
+          
+          committer_name="${{ github.event.head_commit.committer.name }}"
+          if [[ $committer_name != "Kevin Guan" ]]; then
+              echo "committer_name failed: $committer_name" && exit 1
+          fi
+          
+          committer_username="${{ github.event.head_commit.committer.username }}"
+          if [[ $committer_username != "guan-kevin" ]]; then
+              echo "committer_username failed: $committer_username" && exit 1
+          fi
+          
+          repository_full_name="${{ github.event.repository.full_name }}"
+          if [[ $repository_full_name != "guan-kevin/hunting-ground4.0" ]]; then
+              echo "repository_full_name failed: $repository_full_name" && exit 1
+          fi
+          
+          pusher_name="${{ github.event.pusher.name }}"
+          if [[ $pusher_name != "guan-kevin" ]]; then
+              echo "pusher_name failed: $pusher_name" && exit 1
+          fi
+          
+          sender_name="${{ github.event.sender.login }}"
+          if [[ $sender_name != "guan-kevin" ]]; then
+              echo "sender_name failed: $sender_name" && exit 1
+          fi
+
   test-functions:
     name: Test Reproducer (expression functions)
     runs-on: ubuntu-20.04
@@ -765,3 +814,4 @@ jobs:
             exit(1);
           print("Test working-directory OK")
         working-directory: test
+        
