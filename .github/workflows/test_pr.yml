@@ -4,7 +4,7 @@ on: pull_request
 defaults:
   run:
     shell: bash
-    
+
 env:
   workflow_ENV_1: Workflow Env 1
   workflow_ENV_2: Workflow Env 2
