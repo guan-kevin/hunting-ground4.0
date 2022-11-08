@@ -341,6 +341,11 @@ jobs:
             echo "api_url failed: $api_url" && exit 1
           fi
 
+          base_ref="${{ github.base_ref }}"
+          if [[ $base_ref != "main" ]]; then
+            echo "base_ref failed: $base_ref" && exit 1
+          fi
+          
           event_name="${{ github.event_name }}"
           if [[ $event_name != "pull_request" ]]; then
             echo "event_name failed: $event_name" && exit 1
@@ -349,6 +354,11 @@ jobs:
           graphql_url="${{ github.graphql_url }}"
           if [[ $graphql_url != "https://api.github.com/graphql" ]]; then
               echo "graphql_url failed: $graphql_url" && exit 1
+          fi
+          
+          head_ref="${{ github.head_ref }}"
+          if [[ $head_ref != "pull_request" ]]; then
+            echo "head_ref failed: $head_ref" && exit 1
           fi
 
           job="${{ github.job }}"
@@ -462,6 +472,97 @@ jobs:
               echo "tool_cache failed: $tool_cache" && exit 1
           fi
 
+  test-environment-variables:
+    name: Test reproducer (environment variables)
+    runs-on: ubuntu-20.04
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['', 'python:3']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Failed build
+        run: |
+          exit $(cat status.txt)
+        shell: bash
+      - name: Test Environment Variables
+        run: |
+          if [[ $CI != true ]]; then
+              echo "CI failed: $CI" && exit 1
+          fi
+          
+          if [[ $GITHUB_ACTIONS != true ]]; then
+              echo "GITHUB_ACTIONS failed: $GITHUB_ACTIONS" && exit 1
+          fi
+          
+          if [[ $GITHUB_ACTOR != "guan-kevin" ]]; then
+              echo "GITHUB_ACTOR failed: $GITHUB_ACTOR" && exit 1
+          fi
+          
+          if [[ $GITHUB_API_URL != "https://api.github.com" ]]; then
+              echo "GITHUB_API_URL failed: $GITHUB_API_URL" && exit 1
+          fi
+          
+          if [[ $GITHUB_BASE_REF != "main" ]]; then
+              echo "GITHUB_BASE_REF failed: $GITHUB_BASE_REF" && exit 1
+          fi
+          
+          if [[ $GITHUB_EVENT_NAME != "pull_request" ]]; then
+              echo "GITHUB_EVENT_NAME failed: $GITHUB_EVENT_NAME" && exit 1
+          fi
+          
+          if [[ $GITHUB_GRAPHQL_URL != "https://api.github.com/graphql" ]]; then
+              echo "GITHUB_GRAPHQL_URL failed: $GITHUB_GRAPHQL_URL" && exit 1
+          fi
+          
+          if [[ $GITHUB_HEAD_REF != "pull_request" ]]; then
+              echo "GITHUB_HEAD_REF failed: $GITHUB_HEAD_REF" && exit 1
+          fi
+          
+          if [[ $GITHUB_JOB != "test-environment-variables" ]]; then
+              echo "GITHUB_JOB failed: $GITHUB_JOB" && exit 1
+          fi
+          
+          if [[ $GITHUB_REF != "refs/pull/1/merge" ]]; then
+              echo "GITHUB_REF failed: $GITHUB_REF" && exit 1
+          fi
+
+          if [[ $GITHUB_REF_NAME != "1/merge" ]]; then
+              echo "GITHUB_REF_NAME failed: $GITHUB_REF_NAME" && exit 1
+          fi
+          
+          if [[ $GITHUB_REF_PROTECTED != false ]]; then
+              echo "GITHUB_REF_PROTECTED failed: $GITHUB_REF_PROTECTED" && exit 1
+          fi
+          
+          if [[ $GITHUB_REF_TYPE != "branch" ]]; then
+              echo "GITHUB_REF_TYPE failed: $GITHUB_REF_TYPE" && exit 1
+          fi
+          
+          if [[ $GITHUB_REPOSITORY != "guan-kevin/hunting-ground4.0" ]]; then
+              echo "GITHUB_REPOSITORY failed: $GITHUB_REPOSITORY" && exit 1
+          fi
+
+          if [[ $GITHUB_REPOSITORY_OWNER != "guan-kevin" ]]; then
+              echo "GITHUB_REPOSITORY_OWNER failed: $GITHUB_REPOSITORY_OWNER" && exit 1
+          fi
+          
+          if [[ $GITHUB_SERVER_URL != "https://github.com" ]]; then
+              echo "GITHUB_SERVER_URL failed: $GITHUB_SERVER_URL" && exit 1
+          fi
+          
+          if [[ $GITHUB_WORKFLOW != "Reproducer Test For Pull Request" ]]; then
+              echo "GITHUB_WORKFLOW failed: $GITHUB_WORKFLOW" && exit 1
+          fi
+          
+          if [[ $RUNNER_ARCH != "X64" ]]; then
+              echo "RUNNER_ARCH failed: $RUNNER_ARCH" && exit 1
+          fi
+          
+          if [[ $RUNNER_OS != "Linux" ]]; then
+              echo "RUNNER_OS failed: $RUNNER_OS" && exit 1
+          fi
+          
   test-functions:
     name: Test Reproducer (expression fucntions)
     runs-on: ubuntu-20.04
