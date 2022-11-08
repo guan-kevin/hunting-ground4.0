@@ -580,7 +580,7 @@ jobs:
           if [[ ${{ contains(env.workflow_ENV_1, '1') }} == true ]]; then
             echo "contains_1=1" >> $GITHUB_ENV
           fi
-  
+
           if [[ ${{ contains(env.workflow_ENV_2, '1') }} != true ]]; then
             echo "contains_2=1" >> $GITHUB_ENV
           fi
