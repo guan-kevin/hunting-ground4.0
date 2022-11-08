@@ -344,7 +344,7 @@ jobs:
           if [[ $base_ref != "main" ]]; then
             echo "base_ref failed: $base_ref" && exit 1
           fi
-          
+
           event_name="${{ github.event_name }}"
           if [[ $event_name != "pull_request" ]]; then
             echo "event_name failed: $event_name" && exit 1
