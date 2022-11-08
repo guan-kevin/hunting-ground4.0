@@ -489,7 +489,7 @@ jobs:
           if [[ $CI != true ]]; then
               echo "CI failed: $CI" && exit 1
           fi
-          
+
           if [[ $GITHUB_ACTIONS != true ]]; then
               echo "GITHUB_ACTIONS failed: $GITHUB_ACTIONS" && exit 1
           fi
