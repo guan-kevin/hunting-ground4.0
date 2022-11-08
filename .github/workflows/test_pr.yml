@@ -4,7 +4,7 @@ on: pull_request
 defaults:
   run:
     shell: bash
-
+    
 env:
   workflow_ENV_1: Workflow Env 1
   workflow_ENV_2: Workflow Env 2
@@ -367,7 +367,7 @@ jobs:
           fi
 
           ref="${{ github.ref }}"
-          if [[ $ref != "refs/heads/main" ]]; then
+          if [[ $ref != "refs/pull/1/merge" ]]; then
               echo "ref failed: $ref" && exit 1
           fi
 
