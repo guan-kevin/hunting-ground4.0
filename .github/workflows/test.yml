@@ -486,7 +486,7 @@ jobs:
           if [[ $GITHUB_ACTIONS != true ]]; then
               echo "GITHUB_ACTIONS failed: $GITHUB_ACTIONS" && exit 1
           fi
-          
+
           if [[ $GITHUB_ACTOR != "guan-kevin" ]]; then
               echo "GITHUB_ACTOR failed: $GITHUB_ACTOR" && exit 1
           fi
