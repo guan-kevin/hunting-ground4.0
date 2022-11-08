@@ -372,7 +372,7 @@ jobs:
           fi
 
           ref_name="${{ github.ref_name }}"
-          if [[ $ref_name != "main" ]]; then
+          if [[ $ref_name != "1/merge" ]]; then
               echo "ref_name failed: $ref_name" && exit 1
           fi
 
@@ -562,9 +562,9 @@ jobs:
           if [[ $RUNNER_OS != "Linux" ]]; then
               echo "RUNNER_OS failed: $RUNNER_OS" && exit 1
           fi
-          
+
   test-functions:
-    name: Test Reproducer (expression fucntions)
+    name: Test Reproducer (expression functions)
     runs-on: ubuntu-20.04
     container: ${{ matrix.container }}
     strategy:
