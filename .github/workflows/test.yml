@@ -1,13 +1,13 @@
 name: Reproducer Test
 on:
   push:
-    branches:    
+    branches:
       - main
 
 defaults:
   run:
     shell: bash
-    
+
 env:
   workflow_ENV_1: Workflow Env 1
   workflow_ENV_2: Workflow Env 2
@@ -318,7 +318,6 @@ jobs:
         env:
           HELLO: world
 
-
   test-contexts:
     name: Test reproducer (contexts)
     runs-on: ubuntu-20.04
@@ -348,7 +347,7 @@ jobs:
           if [[ $event_name != "push" ]]; then
             echo "event_name failed: $event_name" && exit 1
           fi
-   
+
           graphql_url="${{ github.graphql_url }}"
           if [[ $graphql_url != "https://api.github.com/graphql" ]]; then
               echo "graphql_url failed: $graphql_url" && exit 1
