@@ -18,6 +18,7 @@ jobs:
     strategy:
       matrix:
         container: ['', 'python:3']
+      fail-fast: false
     env:
       job_ENV_1: Job Env 1
       job_ENV_2: Job Env 2
@@ -322,6 +323,7 @@ jobs:
     strategy:
       matrix:
         container: ['', 'python:3']
+      fail-fast: false
     steps:
       - uses: actions/checkout@v3
       - name: Failed build
@@ -478,6 +480,7 @@ jobs:
     strategy:
       matrix:
         container: ['', 'python:3']
+      fail-fast: false
     steps:
       - uses: actions/checkout@v3
       - name: Failed build
@@ -569,6 +572,7 @@ jobs:
     strategy:
       matrix:
         container: ['', 'python:3']
+      fail-fast: false
     steps:
       - uses: actions/checkout@v3
       - name: Failed build
@@ -658,6 +662,7 @@ jobs:
     strategy:
       matrix:
         container: ['', 'python:3']
+      fail-fast: false
     steps:
       - uses: actions/checkout@v3
       - name: Failed build
@@ -779,6 +784,7 @@ jobs:
     strategy:
       matrix:
         container: ['', 'python:3']
+      fail-fast: false
     env:
       LARGER_THAN_0: 1
     steps:
@@ -834,6 +840,7 @@ jobs:
     strategy:
       matrix:
         container: ['', 'python:3']
+      fail-fast: false
     defaults:
       run:
         shell: python
