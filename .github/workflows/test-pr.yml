@@ -17,7 +17,7 @@ jobs:
     container: ${{ matrix.container }}
     strategy:
       matrix:
-        container: ['', 'python:3']
+        container: ['', 'ubuntu:22.10']
       fail-fast: false
     env:
       job_ENV_1: Job Env 1
@@ -322,7 +322,7 @@ jobs:
     container: ${{ matrix.container }}
     strategy:
       matrix:
-        container: ['', 'python:3']
+        container: ['', 'ubuntu:22.10']
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
@@ -479,7 +479,7 @@ jobs:
     container: ${{ matrix.container }}
     strategy:
       matrix:
-        container: ['', 'python:3']
+        container: ['', 'ubuntu:22.10']
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
@@ -571,7 +571,7 @@ jobs:
     container: ${{ matrix.container }}
     strategy:
       matrix:
-        container: ['', 'python:3']
+        container: ['', 'ubuntu:22.10']
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
@@ -661,7 +661,7 @@ jobs:
     container: ${{ matrix.container }}
     strategy:
       matrix:
-        container: ['', 'python:3']
+        container: ['', 'ubuntu:22.10']
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
@@ -783,7 +783,7 @@ jobs:
     container: ${{ matrix.container }}
     strategy:
       matrix:
-        container: ['', 'python:3']
+        container: ['', 'ubuntu:22.10']
       fail-fast: false
     env:
       LARGER_THAN_0: 1
@@ -839,7 +839,7 @@ jobs:
     container: ${{ matrix.container }}
     strategy:
       matrix:
-        container: ['', 'python:3']
+        container: ['', 'ubuntu:22.10']
       fail-fast: false
     defaults:
       run:
