@@ -1,5 +1,10 @@
 name: Reproducer Test For Pull Request
-on: pull_request
+on:
+  pull_request:
+    branches:
+      - pull_request
+    paths:
+      - 'status.txt'
 
 defaults:
   run:
