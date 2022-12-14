@@ -16,7 +16,7 @@ WAIT_INTERVAL = 30  # Wait 30 seconds then pull again
 def main():
     while time.time() < starting_time + TIMEOUT:
         result = requests.get(api_url, headers={'Authorization': authorization})
-        conclusion = {}
+        conclusion = set()
 
         for run in result.json()['workflow_runs']:
             if run['event'] == 'pull_request':
