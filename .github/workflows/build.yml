@@ -1,5 +1,9 @@
 name: Build Job Pairs
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      breanch:
+        required: false
 
 jobs:
   build_push:
