@@ -92,7 +92,7 @@ jobs:
           cp credentials.sample.py credentials.py
           sed -i "s/DATABASE_PIPELINE_TOKEN = .*/DATABASE_PIPELINE_TOKEN = 'testDBPassword'/g" credentials.py
           sed -i "s/COMMON_HOSTNAME = .*/COMMON_HOSTNAME = '127.0.0.1:5000'/g" credentials.py
-          sed -i "s/GITHUB_TOKENS = .*/GITHUB_TOKENS = ['<dummy github token>']/g" credentials.py
+          sed -i "s/GITHUB_TOKENS = .*/GITHUB_TOKENS = ['${{ secrets.GH_TOKEN }}']/g" credentials.py
           sed -i "s/TRAVIS_TOKENS = .*/TRAVIS_TOKENS = ['<dummy travis token>']/g" credentials.py
           sed -i "s/''/'#'/g" credentials.py
       - name: Install dependencies
