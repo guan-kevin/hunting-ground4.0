@@ -68,6 +68,6 @@ jobs:
       - run: python tests/test_jobpairs_generation.py
         env:
           token: ${{ secrets.GH_TOKEN }}
-          repo: $${{ github.repository }}
+          repo: ${{ github.repository }}
 
         
