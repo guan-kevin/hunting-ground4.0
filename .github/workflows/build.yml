@@ -11,7 +11,7 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
        - run: |
-          echo '1' >> status.txt 
+          echo '1' > status.txt 
           git add .
           git commit -m "Generated failed run"
           git push
@@ -20,7 +20,7 @@ jobs:
          with:
             branch: main
        - run: |
-          echo '0' >> status.txt 
+          echo '0' > status.txt 
           git add .
           git commit -m "Generated passed run"
           git push
