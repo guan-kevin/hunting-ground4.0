@@ -50,6 +50,8 @@ jobs:
             git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
             git push
             
+            sleep 15
+            
             echo '0' > status.txt 
             git add .
             git commit -m "Generated passed run"
