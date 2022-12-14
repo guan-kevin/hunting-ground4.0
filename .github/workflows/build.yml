@@ -2,72 +2,108 @@ name: Build Job Pairs
 on: 
   workflow_dispatch:
     inputs:
-      breanch:
+      branch:
         required: false
 
 jobs:
-  build_push:
-    name: Generate job pair for non-PR job
+#   build_push:
+#     name: Generate job pair for non-PR job
+#     runs-on: ubuntu-latest
+#     steps:
+#       - run: |
+#             git clone -b main https://github.com/${{ github.repository }}.git repo
+#             cd repo
+#             git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
+#             git config --local user.name "Kevin Guan"
+            
+#             echo '1' > status.txt 
+#             git add .
+#             git commit -m "Generated failed run"
+#             git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
+#             git push
+            
+#             sleep 10
+            
+#             echo '0' > status.txt 
+#             git add .
+#             git commit -m "Generated passed run"
+#             git push
+
+#   build_pull_request:
+#       name: Generate job pair for PR job
+#       needs: [build_push]
+#       runs-on: ubuntu-latest
+#       steps:
+#          - run: |
+#             sleep 10
+            
+#             git clone -b pull_request https://github.com/${{ github.repository }}.git repo
+#             cd repo
+#             git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
+#             git config --local user.name "Kevin Guan"
+            
+#             echo '1' > status.txt 
+#             git add .
+#             git commit -m "Generated failed run"
+#             git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
+#             git push
+            
+#             sleep 10
+            
+#             echo '0' > status.txt 
+#             git add .
+#             git commit -m "Generated passed run"
+#             git push
+
+#   wait:
+#     name: Waiting for job pairs
+#     needs: [build_push, build_pull_request]
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: actions/setup-python@v4
+#         with:
+#           python-version: '3.11' 
+#       - run: pip install -r requirements.txt
+#       - run: python tests/test_jobpairs_generation.py
+#         env:
+#           token: ${{ secrets.GH_TOKEN }}
+#           repo: ${{ github.repository }}
+  
+  integration_test:
+    name: Test pipeline
     runs-on: ubuntu-latest
     steps:
-      - run: |
-            git clone -b main https://github.com/${{ github.repository }}.git repo
-            cd repo
-            git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
-            git config --local user.name "Kevin Guan"
-            
-            echo '1' > status.txt 
-            git add .
-            git commit -m "Generated failed run"
-            git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
-            git push
-            
-            sleep 10
-            
-            echo '0' > status.txt 
-            git add .
-            git commit -m "Generated passed run"
-            git push
-
-  build_pull_request:
-      name: Generate job pair for PR job
-      needs: [build_push]
-      runs-on: ubuntu-latest
-      steps:
-         - run: |
-            sleep 10
-            
-            git clone -b pull_request https://github.com/${{ github.repository }}.git repo
-            cd repo
-            git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
-            git config --local user.name "Kevin Guan"
-            
-            echo '1' > status.txt 
-            git add .
-            git commit -m "Generated failed run"
-            git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
-            git push
-            
-            sleep 10
-            
-            echo '0' > status.txt 
-            git add .
-            git commit -m "Generated passed run"
-            git push
-
-  wait:
-    name: Waiting for job pairs.
-    needs: [build_push, build_pull_request]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11' 
-      - run: pip install -r requirements.txt
-      - run: python tests/test_jobpairs_generation.py
-        env:
-          token: ${{ secrets.GH_TOKEN }}
-          repo: ${{ github.repository }}
+      - name: Setup database
+        run: |
+          docker pull bugswarm/containers:bugswarm-db
+          docker tag bugswarm/containers:bugswarm-db bugswarm-db
+          docker run -itd -p 27017:27017 -p 5000:5000 bugswarm-db
+      - name: Setup repo
+        run: |
+          if [[ ! -z "${{ inputs.branch }}" ]] then;
+                git clone https://${{ secrets.GH_TOKEN }}@github.com/${{ secrets.DEV_REPO }}.git repo > /dev/null
+          else
+                git clone -b ${{ inputs.branch }} https://${{ secrets.GH_TOKEN }}@github.com/${{ secrets.DEV_REPO }}.git repo > /dev/null
+          fi
+      - name: Add credentials
+        working-directory: repo/bugswarm/common
+        run: |
+          cp credentials.sample.py credentials.py
+          sed -i "s/DATABASE_PIPELINE_TOKEN = .*/DATABASE_PIPELINE_TOKEN = 'testDBPassword'/g"
+          sed -i "s/COMMON_HOSTNAME = .*/COMMON_HOSTNAME = '127.0.0.1:5000'/g"
+          sed -i "s/GITHUB_TOKENS = .*/GITHUB_TOKENS = ['<dummy github token>']/g" credentials.py
+          sed -i "s/TRAVIS_TOKENS = .*/TRAVIS_TOKENS = ['<dummy travis token>']/g" credentials.py
+          sed -i "s/''/'#'/g" credentials.py
+      - name: Install dependencies
+        working-directory: repo
+        run: |
+          pip install --upgrade --force-reinstall .
+      - name: Run miner
+        working-directory: repo
+        run: |
+          sed -i "s/.*python3 pair_finder.py --keep-clone --repo \${repo} .*/python3 pair_finder.py --keep-clone --repo \${repo} --threads \${threads} --cutoff-days 1/g" run_mine_project.sh
+          ./run_mine_project.sh -r ${{ github.repository }}
+  
 
         
