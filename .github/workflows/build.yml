@@ -8,8 +8,8 @@ jobs:
     steps:
        - uses: actions/checkout@v3
        - run: |
-          git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
-          git config --local user.name "guan-kevin"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
        - run: |
           echo '1' > status.txt 
           git add .
@@ -28,3 +28,4 @@ jobs:
          uses: ad-m/github-push-action@master
          with:
             branch: main
+            github_token: ${{ secrets.GH_TOKEN }}
