@@ -42,7 +42,6 @@ jobs:
             git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
             git config --local user.name "Kevin Guan"
             git clone -b pull_request https://github.com/${{ github.repository }}.git repo
-         - run: |
             cd repo
             echo '1' > status.txt 
             git add .
