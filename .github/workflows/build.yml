@@ -1,0 +1,19 @@
+name: Build Job Pairs
+on: workflow_dispatch
+
+jobs:
+  build:
+    name: Generate job pair for non-PR job
+    runs-on: ubuntu-22.04
+    steps:
+       - uses: actions/checkout@v3
+       - run: |
+          echo '1' >> status.txt 
+          git add .
+          git commit -m "Generated failed run"
+          git push
+       - run: |
+          echo '0' >> status.txt 
+          git add .
+          git commit -m "Generated passed run"
+          git push
