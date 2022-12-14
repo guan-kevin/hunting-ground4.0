@@ -60,8 +60,14 @@ jobs:
     needs: [build_push, build_pull_request]
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo ${{ github.run_id }}
-          sleep 60
-          
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11' 
+      - run: pip install -r requirements.txt
+      - run: python tests/test_jobpairs_generation.py
+        env:
+          token: ${{ secrets.GH_TOKEN }}
+          repo: $${{ github.repository }}
+
         
