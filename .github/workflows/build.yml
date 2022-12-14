@@ -39,15 +39,17 @@ jobs:
       runs-on: ubuntu-latest
       steps:
          - run: |
-            git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
-            git config --local user.name "Kevin Guan"
             git clone -b pull_request https://github.com/${{ github.repository }}.git repo
             cd repo
+            git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
+            git config --local user.name "Kevin Guan"
+            
             echo '1' > status.txt 
             git add .
             git commit -m "Generated failed run"
             git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
             git push
+            
             echo '0' > status.txt 
             git add .
             git commit -m "Generated passed run"
