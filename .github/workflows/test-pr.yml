@@ -1,8 +1,5 @@
 name: Reproducer Test For Pull Request
-on:
-  pull_request:
-    paths:
-      - 'status.txt'
+on: pull_request
 
 defaults:
   run:
