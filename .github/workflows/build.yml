@@ -6,72 +6,73 @@ on:
         required: false
 
 jobs:
-#   build_push:
-#     name: Generate job pair for non-PR job
-#     runs-on: ubuntu-latest
-#     steps:
-#       - run: |
-#             git clone -b main https://github.com/${{ github.repository }}.git repo
-#             cd repo
-#             git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
-#             git config --local user.name "Kevin Guan"
+  build_push:
+    name: Generate job pair for non-PR job
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+            git clone -b main https://github.com/${{ github.repository }}.git repo
+            cd repo
+            git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
+            git config --local user.name "Kevin Guan"
             
-#             echo '1' > status.txt 
-#             git add .
-#             git commit -m "Generated failed run"
-#             git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
-#             git push
+            echo '1' > status.txt 
+            git add .
+            git commit -m "Generated failed run"
+            git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
+            git push
             
-#             sleep 10
+            sleep 10
             
-#             echo '0' > status.txt 
-#             git add .
-#             git commit -m "Generated passed run"
-#             git push
+            echo '0' > status.txt 
+            git add .
+            git commit -m "Generated passed run"
+            git push
 
-#   build_pull_request:
-#       name: Generate job pair for PR job
-#       needs: [build_push]
-#       runs-on: ubuntu-latest
-#       steps:
-#          - run: |
-#             sleep 10
+  build_pull_request:
+      name: Generate job pair for PR job
+      needs: [build_push]
+      runs-on: ubuntu-latest
+      steps:
+         - run: |
+            sleep 10
             
-#             git clone -b pull_request https://github.com/${{ github.repository }}.git repo
-#             cd repo
-#             git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
-#             git config --local user.name "Kevin Guan"
+            git clone -b pull_request https://github.com/${{ github.repository }}.git repo
+            cd repo
+            git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
+            git config --local user.name "Kevin Guan"
             
-#             echo '1' > status.txt 
-#             git add .
-#             git commit -m "Generated failed run"
-#             git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
-#             git push
+            echo '1' > status.txt 
+            git add .
+            git commit -m "Generated failed run"
+            git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
+            git push
             
-#             sleep 10
+            sleep 10
             
-#             echo '0' > status.txt 
-#             git add .
-#             git commit -m "Generated passed run"
-#             git push
+            echo '0' > status.txt 
+            git add .
+            git commit -m "Generated passed run"
+            git push
 
-#   wait:
-#     name: Waiting for job pairs
-#     needs: [build_push, build_pull_request]
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#       - uses: actions/setup-python@v4
-#         with:
-#           python-version: '3.11' 
-#       - run: pip install -r requirements.txt
-#       - run: python tests/test_jobpairs_generation.py
-#         env:
-#           token: ${{ secrets.GH_TOKEN }}
-#           repo: ${{ github.repository }}
+  wait:
+    name: Waiting for job pairs
+    needs: [build_push, build_pull_request]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11' 
+      - run: pip install -r requirements.txt
+      - run: python tests/test_jobpairs_generation.py
+        env:
+          token: ${{ secrets.GH_TOKEN }}
+          repo: ${{ github.repository }}
   
   integration_test:
     name: Test pipeline
+    needs: wait
     runs-on: ubuntu-latest
     steps:
       - name: Setup database
