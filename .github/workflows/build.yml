@@ -31,6 +31,7 @@ jobs:
 
   build_pull_request:
       name: Generate job pair for PR job
+      needs: [build_push]
       runs-on: ubuntu-latest
       steps:
          - run: |
