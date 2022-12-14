@@ -21,6 +21,7 @@ jobs:
          uses: ad-m/github-push-action@master
          with:
             branch: main
+            github_token: ${{ secrets.GH_TOKEN }}
        - run: |
           echo '0' > status.txt 
           git add .
@@ -50,7 +51,8 @@ jobs:
          - name: Push changes
            uses: ad-m/github-push-action@master
            with:
-              branch: main
+              branch: pull_request
+              github_token: ${{ secrets.GH_TOKEN }}
          - run: |
             echo '0' > status.txt 
             git add .
