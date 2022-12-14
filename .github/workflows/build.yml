@@ -76,8 +76,8 @@ jobs:
     steps:
       - name: Setup database
         run: |
-          docker pull bugswarm/containers:bugswarm-db
-          docker tag bugswarm/containers:bugswarm-db bugswarm-db
+          docker pull pigzy/database:latest
+          docker tag pigzy/database:latest bugswarm-db
           docker run -itd -p 27017:27017 -p 5000:5000 bugswarm-db
       - name: Setup repo
         run: |
