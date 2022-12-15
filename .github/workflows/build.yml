@@ -115,7 +115,11 @@ jobs:
       - name: Generate reproducer input JSON file
         working-directory: repo/reproducer
         run: |
-          python3 pair_chooser.py -o test.json -r  ${{ github.repository }}
+          python pair_chooser.py -o test.json -r  ${{ github.repository }}
+          python ${{ github.workspace }}/tests/select_most_recent_buildpairs.py
+      - name: Run reproducer
+        working-directory: repo/reproducer
+        run: python entry.py -i test.json -t 2 -k -o test
   
 
         
