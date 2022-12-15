@@ -4,13 +4,20 @@ on:
     inputs:
       branch:
         required: false
+      generate:
+        description: Generate failed and passed build
+        type: boolean
+        required: true
+        default: false
 
 jobs:
   build_push:
     name: Generate job pair for non-PR job
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - name: Generate job pair
+        if: ${{ inputs.generate }}
+        run: |
             git clone -b main https://github.com/${{ github.repository }}.git repo
             cd repo
             git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
@@ -34,7 +41,8 @@ jobs:
       needs: [build_push]
       runs-on: ubuntu-latest
       steps:
-         - run: |
+        - name: Generate job pair
+          if: ${{ inputs.generate }}
             sleep 15
             
             git clone -b pull_request https://github.com/${{ github.repository }}.git repo
