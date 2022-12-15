@@ -113,7 +113,7 @@ jobs:
       - name: Install dependencies
         working-directory: repo
         run: |
-          pip install --upgrade --force-reinstall .
+          pip install -e .
       - name: Run miner
         working-directory: repo
         run: |
