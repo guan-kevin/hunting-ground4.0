@@ -22,7 +22,7 @@ jobs:
             git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
             git push
             
-            sleep 10
+            sleep 15
             
             echo '0' > status.txt 
             git add .
@@ -35,7 +35,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
          - run: |
-            sleep 10
+            sleep 15
             
             git clone -b pull_request https://github.com/${{ github.repository }}.git repo
             cd repo
@@ -48,7 +48,7 @@ jobs:
             git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
             git push
             
-            sleep 10
+            sleep 15
             
             echo '0' > status.txt 
             git add .
