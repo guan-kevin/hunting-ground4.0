@@ -2,7 +2,7 @@ import sys
 import json
 
 data = None
-with open('guan-kevin-hunting-ground4.0.json', 'r') as f:
+with open('test.json', 'r') as f:
     data = json.load(f)
 
 if not data:
@@ -12,7 +12,7 @@ if not data:
 latest_push_build_pair = None
 latest_pull_build_pair = None
 
-with open('guan-kevin-hunting-ground4.0.json', 'w') as f:
+with open('test.json', 'w') as f:
     for build_pair in data:
         if build_pair['branch'] == 'pull_request':
             if latest_pull_build_pair is None or build_pair['failed_build']['build_id'] > latest_pull_build_pair['failed_build']['build_id']:
