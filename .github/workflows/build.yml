@@ -120,4 +120,4 @@ jobs:
           python ${{ github.workspace }}/tests/select_most_recent_buildpairs.py
       - name: Run reproducer
         working-directory: repo/reproducer
-        run: python entry.py -i test.json -t 2 -k -o test
+        run: python entry.py -i test.json -t 2 -s -o test
