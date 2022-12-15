@@ -6,73 +6,73 @@ on:
         required: false
 
 jobs:
-  build_push:
-    name: Generate job pair for non-PR job
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-            git clone -b main https://github.com/${{ github.repository }}.git repo
-            cd repo
-            git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
-            git config --local user.name "Kevin Guan"
+#   build_push:
+#     name: Generate job pair for non-PR job
+#     runs-on: ubuntu-latest
+#     steps:
+#       - run: |
+#             git clone -b main https://github.com/${{ github.repository }}.git repo
+#             cd repo
+#             git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
+#             git config --local user.name "Kevin Guan"
             
-            echo '1' > status.txt 
-            git add .
-            git commit -m "Generated failed run"
-            git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
-            git push
+#             echo '1' > status.txt 
+#             git add .
+#             git commit -m "Generated failed run"
+#             git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
+#             git push
             
-            sleep 10
+#             sleep 10
             
-            echo '0' > status.txt 
-            git add .
-            git commit -m "Generated passed run"
-            git push
+#             echo '0' > status.txt 
+#             git add .
+#             git commit -m "Generated passed run"
+#             git push
 
-  build_pull_request:
-      name: Generate job pair for PR job
-      needs: [build_push]
-      runs-on: ubuntu-latest
-      steps:
-         - run: |
-            sleep 10
+#   build_pull_request:
+#       name: Generate job pair for PR job
+#       needs: [build_push]
+#       runs-on: ubuntu-latest
+#       steps:
+#          - run: |
+#             sleep 10
             
-            git clone -b pull_request https://github.com/${{ github.repository }}.git repo
-            cd repo
-            git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
-            git config --local user.name "Kevin Guan"
+#             git clone -b pull_request https://github.com/${{ github.repository }}.git repo
+#             cd repo
+#             git config --local user.email "20823498+guan-kevin@users.noreply.github.com"
+#             git config --local user.name "Kevin Guan"
             
-            echo '1' > status.txt 
-            git add .
-            git commit -m "Generated failed run"
-            git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
-            git push
+#             echo '1' > status.txt 
+#             git add .
+#             git commit -m "Generated failed run"
+#             git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
+#             git push
             
-            sleep 10
+#             sleep 10
             
-            echo '0' > status.txt 
-            git add .
-            git commit -m "Generated passed run"
-            git push
+#             echo '0' > status.txt 
+#             git add .
+#             git commit -m "Generated passed run"
+#             git push
 
-  wait:
-    name: Waiting for job pairs
-    needs: [build_push, build_pull_request]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11' 
-      - run: pip install -r requirements.txt
-      - run: python tests/test_jobpairs_generation.py
-        env:
-          token: ${{ secrets.GH_TOKEN }}
-          repo: ${{ github.repository }}
+#   wait:
+#     name: Waiting for job pairs
+#     needs: [build_push, build_pull_request]
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: actions/setup-python@v4
+#         with:
+#           python-version: '3.11' 
+#       - run: pip install -r requirements.txt
+#       - run: python tests/test_jobpairs_generation.py
+#         env:
+#           token: ${{ secrets.GH_TOKEN }}
+#           repo: ${{ github.repository }}
   
   integration_test:
     name: Test pipeline
-    needs: wait
+#     needs: wait
     runs-on: ubuntu-latest
     steps:
       - name: Setup database
@@ -82,11 +82,12 @@ jobs:
           docker run -itd -p 27017:27017 -p 5000:5000 bugswarm-db
       - name: Setup repo
         run: |
-          if [[ -z "${{ inputs.branch }}" ]]; then
-                git clone https://${{ secrets.GH_TOKEN }}@github.com/${{ secrets.DEV_REPO }}.git repo > /dev/null
-          else
-                git clone -b ${{ inputs.branch }} https://${{ secrets.GH_TOKEN }}@github.com/${{ secrets.DEV_REPO }}.git repo > /dev/null
-          fi
+          #if [[ -z "${{ inputs.branch }}" ]]; then
+          #      git clone https://${{ secrets.GH_TOKEN }}@github.com/${{ secrets.DEV_REPO }}.git repo > /dev/null
+          #else
+          #      git clone -b ${{ inputs.branch }} https://${{ secrets.GH_TOKEN }}@github.com/${{ secrets.DEV_REPO }}.git repo > /dev/null
+          #fi
+          git clone https://${{ secrets.GH_TOKEN }}@github.com/${{ secrets.DEV_REPO }}.git repo > /dev/null
       - name: Add credentials
         working-directory: repo/bugswarm/common
         run: |
@@ -105,6 +106,15 @@ jobs:
         run: |
           sed -i "s/.*python3 pair_finder.py --keep-clone --repo \${repo} .*/python3 pair_finder.py --keep-clone --repo \${repo} --threads \${threads} --cutoff-days 1/g" run_mine_project.sh
           ./run_mine_project.sh -r ${{ github.repository }}
+      - name: Switch branch (temp)
+        run: |
+          if [[ "${{ inputs.branch }}" ]]; then
+            git checkout ${{ inputs.branch }}
+          fi
+      - name: Generate reproducer input JSON file
+        working-directory: reproducer
+        run: |
+          python3 pair_chooser.py -o test.json -r  ${{ github.repository }}
   
 
         
