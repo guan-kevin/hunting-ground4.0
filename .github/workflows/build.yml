@@ -43,7 +43,7 @@ jobs:
       steps:
         - name: Generate job pair
           if: ${{ inputs.generate }}
-          run:
+          run: |
             sleep 15
             
             git clone -b pull_request https://github.com/${{ github.repository }}.git repo
