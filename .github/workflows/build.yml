@@ -93,7 +93,7 @@ jobs:
           multipass launch focal --name test --cpus 6 --disk 100G --mem 16G --cloud-init tests/cloud-init.yml
           multipass transfer tests/actions.sh test:/home/ubuntu
           multipass exec test -- chmod u+x actions.sh
-          multipass exec test -- bash actions.sh ${{ secrets.GH_TOKEN }} ${{ github.repository }}
+          multipass exec test -- bash actions.sh ${{ secrets.GH_TOKEN }} ${{ github.repository }} ${{ secrets.DEV_REPO }}
       - name: Clean up
         if: ${{ always() }}
         run: multipass delete -p test
