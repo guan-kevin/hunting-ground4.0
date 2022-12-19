@@ -315,6 +315,8 @@ jobs:
           ./test3.sh
         env:
           HELLO: world
+      - name: Report test result
+        run: echo "##Test passed"
 
   test-contexts:
     name: Test reproducer (contexts)
@@ -472,6 +474,8 @@ jobs:
           if [[ $tool_cache != "/opt/hostedtoolcache" ]]; then
               echo "tool_cache failed: $tool_cache" && exit 1
           fi
+      - name: Report test result
+        run: echo "##Test passed"
 
   test-environment-variables:
     name: Test reproducer (environment variables)
@@ -564,6 +568,8 @@ jobs:
           if [[ $RUNNER_OS != "Linux" ]]; then
               echo "RUNNER_OS failed: $RUNNER_OS" && exit 1
           fi
+      - name: Report test result
+        run: echo "##Test passed"
 
   test-payload:
     name: Test Reproducer (payload)
@@ -654,6 +660,8 @@ jobs:
           if [[ $sender_name != "guan-kevin" ]]; then
               echo "sender_name failed: $sender_name" && exit 1
           fi
+      - name: Report test result
+        run: echo "##Test passed"
 
   test-functions:
     name: Test Reproducer (expression functions)
@@ -776,6 +784,8 @@ jobs:
           elif [[ $failure == 1 ]]; then
             echo "Incorrect failure" && exit 1
           fi
+      - name: Report test result
+        run: echo "##Test passed"
   
   test-checkout:
     name: Test Reproducer (checkout)
@@ -832,6 +842,8 @@ jobs:
           print("Test OK")
         shell: python
         working-directory: new-directory/test6
+      - name: Report test result
+        run: echo "##Test passed"
 
   test-defaults:
     name: Test Reproducer (defaults)
@@ -876,3 +888,6 @@ jobs:
             exit(1);
           print("Test working-directory OK")
         working-directory: test
+      - name: Report test result
+        run: echo "##Test passed"
+      
