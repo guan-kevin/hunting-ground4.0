@@ -827,4 +827,5 @@ jobs:
         working-directory: test
       - name: Report test result
         run: echo "##Test passed"
+        shell: bash
       
