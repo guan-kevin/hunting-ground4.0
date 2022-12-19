@@ -64,76 +64,76 @@ jobs:
             git commit -m "Generated passed run"
             git push
 
-  wait:
-    name: Waiting for job pairs
-    needs: [build_push, build_pull_request]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.8' 
-        if: ${{ inputs.generate }}
-      - run: pip install -r requirements.txt
-        if: ${{ inputs.generate }}
-      - run: python tests/test_jobpairs_generation.py
-        if: ${{ inputs.generate }}
-        env:
-          token: ${{ secrets.GH_TOKEN }}
-          repo: ${{ github.repository }}
+#   wait:
+#     name: Waiting for job pairs
+#     needs: [build_push, build_pull_request]
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: actions/setup-python@v4
+#         with:
+#           python-version: '3.8' 
+#         if: ${{ inputs.generate }}
+#       - run: pip install -r requirements.txt
+#         if: ${{ inputs.generate }}
+#       - run: python tests/test_jobpairs_generation.py
+#         if: ${{ inputs.generate }}
+#         env:
+#           token: ${{ secrets.GH_TOKEN }}
+#           repo: ${{ github.repository }}
   
-  integration_test:
-    name: Test pipeline
-    needs: wait
-    runs-on: self-hosted
-    container: bugswarm/images:ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.8' 
-      - name: Setup database
-        run: |
-          docker pull pigzy/database:latest
-          docker tag pigzy/database:latest test-bugswarm-db
-          docker run -itd -p 127.0.0.1:27017:27017 -p 127.0.0.1:5000:5000 test-bugswarm-db
-      - name: Setup repo
-        run: |
-          #if [[ -z "${{ inputs.branch }}" ]]; then
-          #      git clone https://${{ secrets.GH_TOKEN }}@github.com/${{ secrets.DEV_REPO }}.git repo > /dev/null
-          #else
-          #      git clone -b ${{ inputs.branch }} https://${{ secrets.GH_TOKEN }}@github.com/${{ secrets.DEV_REPO }}.git repo > /dev/null
-          #fi
-          git clone https://${{ secrets.GH_TOKEN }}@github.com/${{ secrets.DEV_REPO }}.git repo > /dev/null
-      - name: Add credentials
-        working-directory: repo/bugswarm/common
-        run: |
-          cp credentials.sample.py credentials.py
-          sed -i "s/DATABASE_PIPELINE_TOKEN = .*/DATABASE_PIPELINE_TOKEN = 'testDBPassword'/g" credentials.py
-          sed -i "s/COMMON_HOSTNAME = .*/COMMON_HOSTNAME = '127.0.0.1:5000'/g" credentials.py
-          sed -i "s/GITHUB_TOKENS = .*/GITHUB_TOKENS = ['${{ secrets.GH_TOKEN }}']/g" credentials.py
-          sed -i "s/TRAVIS_TOKENS = .*/TRAVIS_TOKENS = ['<dummy travis token>']/g" credentials.py
-          sed -i "s/''/'#'/g" credentials.py
-      - name: Install dependencies
-        working-directory: repo
-        run: |
-          pip install -e .
-      - name: Run miner
-        working-directory: repo
-        run: |
-          sed -i "s/.*python3 pair_finder.py --keep-clone --repo \${repo} .*/python3 pair_finder.py --keep-clone --repo \${repo} --threads \${threads} --cutoff-days 1/g" run_mine_project.sh
-          ./run_mine_project.sh -r ${{ github.repository }}
-      - name: Switch branch (temp)
-        working-directory: repo
-        run: |
-          if [[ "${{ inputs.branch }}" ]]; then
-            git checkout ${{ inputs.branch }}
-          fi
-      - name: Generate reproducer input JSON file
-        working-directory: repo/reproducer
-        run: |
-          python pair_chooser.py -o test.json -r  ${{ github.repository }}
-          python ${{ github.workspace }}/tests/select_most_recent_buildpairs.py
-      - name: Run reproducer
-        working-directory: repo/reproducer
-        run: python entry.py -i test.json -t 2 -s -o test
+#   integration_test:
+#     name: Test pipeline
+#     needs: wait
+#     runs-on: self-hosted
+#     container: bugswarm/images:ubuntu-20.04
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: actions/setup-python@v4
+#         with:
+#           python-version: '3.8' 
+#       - name: Setup database
+#         run: |
+#           docker pull pigzy/database:latest
+#           docker tag pigzy/database:latest test-bugswarm-db
+#           docker run -itd -p 127.0.0.1:27017:27017 -p 127.0.0.1:5000:5000 test-bugswarm-db
+#       - name: Setup repo
+#         run: |
+#           #if [[ -z "${{ inputs.branch }}" ]]; then
+#           #      git clone https://${{ secrets.GH_TOKEN }}@github.com/${{ secrets.DEV_REPO }}.git repo > /dev/null
+#           #else
+#           #      git clone -b ${{ inputs.branch }} https://${{ secrets.GH_TOKEN }}@github.com/${{ secrets.DEV_REPO }}.git repo > /dev/null
+#           #fi
+#           git clone https://${{ secrets.GH_TOKEN }}@github.com/${{ secrets.DEV_REPO }}.git repo > /dev/null
+#       - name: Add credentials
+#         working-directory: repo/bugswarm/common
+#         run: |
+#           cp credentials.sample.py credentials.py
+#           sed -i "s/DATABASE_PIPELINE_TOKEN = .*/DATABASE_PIPELINE_TOKEN = 'testDBPassword'/g" credentials.py
+#           sed -i "s/COMMON_HOSTNAME = .*/COMMON_HOSTNAME = '127.0.0.1:5000'/g" credentials.py
+#           sed -i "s/GITHUB_TOKENS = .*/GITHUB_TOKENS = ['${{ secrets.GH_TOKEN }}']/g" credentials.py
+#           sed -i "s/TRAVIS_TOKENS = .*/TRAVIS_TOKENS = ['<dummy travis token>']/g" credentials.py
+#           sed -i "s/''/'#'/g" credentials.py
+#       - name: Install dependencies
+#         working-directory: repo
+#         run: |
+#           pip install -e .
+#       - name: Run miner
+#         working-directory: repo
+#         run: |
+#           sed -i "s/.*python3 pair_finder.py --keep-clone --repo \${repo} .*/python3 pair_finder.py --keep-clone --repo \${repo} --threads \${threads} --cutoff-days 1/g" run_mine_project.sh
+#           ./run_mine_project.sh -r ${{ github.repository }}
+#       - name: Switch branch (temp)
+#         working-directory: repo
+#         run: |
+#           if [[ "${{ inputs.branch }}" ]]; then
+#             git checkout ${{ inputs.branch }}
+#           fi
+#       - name: Generate reproducer input JSON file
+#         working-directory: repo/reproducer
+#         run: |
+#           python pair_chooser.py -o test.json -r  ${{ github.repository }}
+#           python ${{ github.workspace }}/tests/select_most_recent_buildpairs.py
+#       - name: Run reproducer
+#         working-directory: repo/reproducer
+#         run: python entry.py -i test.json -t 2 -s -o test
