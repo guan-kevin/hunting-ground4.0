@@ -64,24 +64,40 @@ jobs:
             git commit -m "Generated passed run"
             git push
 
-#   wait:
-#     name: Waiting for job pairs
-#     needs: [build_push, build_pull_request]
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#       - uses: actions/setup-python@v4
-#         with:
-#           python-version: '3.8' 
-#         if: ${{ inputs.generate }}
-#       - run: pip install -r requirements.txt
-#         if: ${{ inputs.generate }}
-#       - run: python tests/test_jobpairs_generation.py
-#         if: ${{ inputs.generate }}
-#         env:
-#           token: ${{ secrets.GH_TOKEN }}
-#           repo: ${{ github.repository }}
-  
+  wait:
+    name: Waiting for job pairs
+    needs: [build_push, build_pull_request]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8' 
+        if: ${{ inputs.generate }}
+      - run: pip install -r requirements.txt
+        if: ${{ inputs.generate }}
+      - run: python tests/test_jobpairs_generation.py
+        if: ${{ inputs.generate }}
+        env:
+          token: ${{ secrets.GH_TOKEN }}
+          repo: ${{ github.repository }}
+
+  integration_test:
+    name: Test pipeline
+    needs: wait
+    runs-on: [self-hosted, codlet]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Lunch VM and test pipeline
+        run: |
+          multipass launch focal --name test --cpus 6 --disk 100G --mem 16G --cloud-init tests/cloud-init.yml
+          multipass transfer tests/actions.sh test:/home/ubuntu
+          multipass exec test -- chmod u+x actions.sh
+          multipass exec test -- bash actions.sh ${{ secrets.GH_TOKEN }} ${{ github.repository }}
+      - name: Clean up
+        if: ${{ always() }}
+        run: multipass delete -p test
+
 #   integration_test:
 #     name: Test pipeline
 #     needs: wait
@@ -96,7 +112,7 @@ jobs:
 #         run: |
 #           docker pull pigzy/database:latest
 #           docker tag pigzy/database:latest test-bugswarm-db
-#           docker run -itd -p 127.0.0.1:27017:27017 -p 127.0.0.1:5000:5000 test-bugswarm-db
+#           docker run -itd -p 127.0.0.1:27017:27017 -p 127.0.0.1:5000:5000 test-bugswarm-db ${{ secrets.DEV_REPO }}
 #       - name: Setup repo
 #         run: |
 #           #if [[ -z "${{ inputs.branch }}" ]]; then
