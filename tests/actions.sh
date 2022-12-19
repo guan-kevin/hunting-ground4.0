@@ -28,7 +28,7 @@ popd
 
 pushd repo/reproducer
 python3 pair_chooser.py -o test.json -r  $REPOSITORY
-python3 ~/tester/tests/select_most_recent_buildpairs.py
+python3 ~/tests/select_most_recent_buildpairs.py
 popd
 
 pushd repo/reproducer
