@@ -33,6 +33,6 @@ python3 pair_chooser.py -o test.json -r  $REPOSITORY
 
 python3 ~/tester/tests/select_most_recent_buildpairs.py
 
-python3 entry.py -i test.json -t 6 -s -o test
+python3 entry.py -i test.json -t 8 -s -o test
 
 python3 ~/tester/tests/check_reproducer.py
