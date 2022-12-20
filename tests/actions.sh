@@ -2,6 +2,8 @@ GH_TOKEN=$1
 REPOSITORY=$2
 TEST_REPOSITORY=$3
 
+git clone https://github.com/$REPOSITORY.git tester
+
 docker pull bugswarm/containers:bugswarm-db
 docker tag bugswarm/containers:bugswarm-db test-bugswarm-db
 docker run -itd -p 127.0.0.1:27017:27017 -p 127.0.0.1:5000:5000 test-bugswarm-db
@@ -28,9 +30,9 @@ popd
 
 pushd repo/reproducer
 python3 pair_chooser.py -o test.json -r  $REPOSITORY
-python3 ~/tests/select_most_recent_buildpairs.py
-popd
 
-pushd repo/reproducer
+python3 ~/tester/tests/select_most_recent_buildpairs.py
+
 python3 entry.py -i test.json -t 6 -s -o test
-popd
+
+python3 ~/tester/tests/check_reproducer.py
