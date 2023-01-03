@@ -7,7 +7,7 @@ repo = os.getenv('repo')
 token = os.getenv('token')
 
 api_url = 'https://api.github.com/repos/{}/actions/runs?per_page=4'.format(repo)
-authorization = 'Token: {}'.format(token)
+authorization = 'Token {}'.format(token)
 
 starting_time = time.time()
 TIMEOUT = 300  # Default timeout after 5 minutes
