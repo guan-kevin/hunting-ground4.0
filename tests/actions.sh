@@ -1,6 +1,10 @@
 GH_TOKEN=$1
 REPOSITORY=$2
 TEST_REPOSITORY=$3
+TOKEN_USERNAME=$4
+
+git config --global credential.helper store
+echo "https://$TOKEN_USERNAME:$GH_TOKEN@github.com" > ~/.git-credentials
 
 git clone https://github.com/$REPOSITORY.git tester
 
