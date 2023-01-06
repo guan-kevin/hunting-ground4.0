@@ -11,4 +11,5 @@ jobs:
     name: Test Pipeline
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Branch: ${{ inputs.branch || 'default' }}"
+      - run: echo "Branch: ${{ inputs.branch }}"
+      
