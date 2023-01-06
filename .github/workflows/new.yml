@@ -13,4 +13,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: echo "${{ github.workspace }}"
-      - run: ls -lia ${{ github.workspace }}
+      - run: sudo ls -lia ${{ github.workspace }}
