@@ -9,6 +9,6 @@ on:
 jobs:
   test:
     name: Test Pipeline
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, s]
     steps:
-      - run: echo "Branch is ${{ inputs.branch || 'default' }}"
+      - run: echo "${{ github.workspace }}"
